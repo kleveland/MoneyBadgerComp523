@@ -2,5 +2,10 @@ extends layout.pug
 block content
     h1(id="HelloWorld") Hello World!
     head
-      title= questions[0].question
+      title= "Quiz Site"
     body
+        each val in questlist
+            div= val.question
+            ul
+                each ans in val.answers
+                    li= ans
