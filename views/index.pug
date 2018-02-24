@@ -1,14 +1,54 @@
 extends layout.pug
 
 
+
+
+
 block content
-    div#questions
+ 
+    head
+        script(src='http://code.jquery.com/jquery-1.9.1.js')
+    
+    
+    div#questionblock
         each val in questlist
-          div.well#questionBox
-            div= val.question
-            ul
+            // p #{val.question_id} -- if val has an id associated with it, it should also be sent in post req.
+            form(name=val.question method='POST' action='submit_handler.file' class='question' id=val.question_id) #{val.question}
+                ul
                 each ans in val.answers
-                  input(type='radio', name= val.question, value= {ans})
-                  |#{ans}
-                  br
-            button(onclick='something()')#btn.btn-primary Submit
+                    input(type='radio', name= val.question, value= {ans})
+                    |#{ans}
+                    br
+                button(type='submit')#btn.btn-primary Submit Answer
+            
+            
+            
+        script(type='text/javascript').
+                /* attach a submit handler to all forms in the DOM */
+                $('form').submit(function(event) {
+                /* stop form from submitting default way (which reloads the whole page)*/
+                event.preventDefault();
+                /* get the action attribute from the <form action=""> element -> contains URL to handler*/
+                var $form = $(this),
+                url = $form.attr('action');
+                /* get the question and answer choice selected */
+                quest = $form.attr('name');
+                answer = $('input:checked').val();
+                //questid = $form.attr('id');
+                /* printing variables before post call is made */
+                console.log(event);
+                console.log(quest);
+                console.log(answer);
+                //console.log(questid);
+                /* Send the data using post */
+                var posting = $.post( url, { question: quest, answer_choice: answer } );
+                /* Alerts the results */
+                posting.done(function( data ) {
+                alert('success');
+                /* 
+                code that will alter the question to show correct/incorrect,
+                and number of attempts will go here
+                */
+                
+                });
+                });
