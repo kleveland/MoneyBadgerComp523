@@ -15,7 +15,7 @@ app.use(express.static('./public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-/*
+
 let config = {
     ip: "localhost",
     port: 3000,
@@ -26,10 +26,10 @@ let config = {
         database: "comp523",
         port: 3306
     }
-};*/
+};
 
 
-let config = {
+/*let config = {
     ip: "localhost",
     port: 3000,
     database: {
@@ -39,7 +39,7 @@ let config = {
         database: "523",
         port: "8889"
     }
-};
+};*/
 
 
 var con = mysql.createConnection({
