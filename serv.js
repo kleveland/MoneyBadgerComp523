@@ -10,10 +10,12 @@ app.use(bodyparser.urlencoded({ // to support URL-encoded bodies
     extended: true
 }));
 
-app.use('/static', express.static(path.join(__dirname, 'public')))
+//app.use('/static', express.static(path.join(__dirname, 'public')))
+app.use(express.static('./public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
+/*
 let config = {
     ip: "localhost",
     port: 3000,
@@ -24,9 +26,9 @@ let config = {
         database: "comp523",
         port: 3306
     }
-};
+};*/
 
-/*
+
 let config = {
     ip: "localhost",
     port: 3000,
@@ -38,7 +40,7 @@ let config = {
         port: "8889"
     }
 };
-*/
+
 
 var con = mysql.createConnection({
     host: config.database.host,
@@ -55,7 +57,7 @@ function getQuestions(cb) {
     con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id", function (err, result, fields) {
         if (err) throw err;
         questions = result;
-        console.log(questions)
+        //console.log(questions)
         result = { questlist: [] }
         i = 0;
         while(i < questions.length) {
@@ -76,11 +78,11 @@ let questions;
 
 getQuestions((quest) => {
     questions = quest;
-    console.log(questions);
+    //console.log(questions.questlist[0].answer);
 })
 
 
 app.get('/', (req, res) => {
-    console.log(questions);
+    //console.log(questions);
     res.render('index', questions);
 })
