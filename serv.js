@@ -28,8 +28,8 @@ let config = {
     }
 };
 
-
-/*let config = {
+/*
+let config = {
     ip: "localhost",
     port: 3000,
     database: {
@@ -39,8 +39,8 @@ let config = {
         database: "523",
         port: "8889"
     }
-};*/
-
+};
+*/
 
 var con = mysql.createConnection({
     host: config.database.host,
@@ -62,7 +62,7 @@ function getQuestions(cb) {
         i = 0;
         while(i < questions.length) {
             id = questions[i].question_id;
-            idx = result.questlist.push({ question: questions[i].question, answers: [] }) - 1;
+            idx = result.questlist.push({ id: id, question: questions[i].question, answers: [] }) - 1;
             result.questlist[idx].answers.push(questions[i].answer);
             i++;
             while(questions[i] != undefined && questions[i].question_id == id) {
