@@ -4,6 +4,7 @@ extends layout.pug
 block content
     div#questions
         each val in questlist
+          div.well#questionBox
             div= val.question
             ul
                 each ans in val.answers
