@@ -1,11 +1,13 @@
 extends layout.pug
+
+
 block content
-    h1(id="HelloWorld") Hello World!
-    head
-      title= "Quiz Site"
-    body
+    div#questions
         each val in questlist
             div= val.question
             ul
                 each ans in val.answers
-                    li= ans
+                  input(type='radio', name= val.question, value= {ans})
+                  |#{ans}
+                  br
+            button(onclick='something()')#btn.btn-primary Submit

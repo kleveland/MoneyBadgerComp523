@@ -1,0 +1,43 @@
+#navbar{
+	background-color: gray;
+	padding: 1px;
+	margin: 5;
+	float: center;
+	width: 100%;
+	text-align: center;
+	opacity: 0.85;
+	}
+#navbar ul {
+	margin: 2px;
+	padding: 0px;
+	list-style-type: none;
+	float: left;
+	display: inline;
+
+	}
+#navbar h2 {
+	    font-family: Lobster, Monospace;
+			color: white;
+			display: inline;
+	  }
+#navbar button{
+			float: right;
+			display: inline;
+			padding: .2em 1em;
+	  }
+#navbar ul li {
+	display: inline;
+	text-decoration: none;
+	padding: .2em 1em;
+	border-style: solid;
+	margin-left: 10px;
+	}
+
+#navbar ul li a {
+	color: white;
+	}
+
+#navbar ul li a:hover {
+	color: #000;
+	background-color: #fff;
+	}

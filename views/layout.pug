@@ -1,7 +1,19 @@
 doctype html
 html
   head
-    title Site - #{title}
-    block scripts
+    title= title
+    link(rel='stylesheet', href='./style/main.css')
+    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+  div.container-fluid
   body
+    div#navbar
+        ul
+          li.home
+            a(href="http://github.com").glyphicon.glyphicon-home  Home
+          li
+            a(href="http://github.com") Grades
+        h2.text-primary Quiz
+        button(onclick='something()').btn.btn-danger Log Out
+
     block content
