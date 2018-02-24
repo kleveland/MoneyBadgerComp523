@@ -4,7 +4,8 @@ extends layout.pug
 block content
     div#questions
         each val in questlist
-            div(class="question")=val.question
+          div.well#questionBox
+            div= val.question
             ul
                 each ans in val.answers
                   input(type='radio', name= val.question, value= {ans})
