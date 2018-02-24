@@ -7,7 +7,7 @@ block content
             div= val.question
             ul
                 each ans in val.answers
-                  input(type='radio', name= val.question, value= {ans})
-                  |#{ans}
-                  br
+                  input(type="radio", name=val.question, value=ans)
+                    = ans
+                    | <br>
             button(onclick='something()')#btn.btn-primary Submit
