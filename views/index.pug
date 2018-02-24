@@ -5,7 +5,7 @@ block content
       title= "Quiz Site"
     body
         each val in questlist
-            div= val.question
+            div(class="question")=val.question
             ul
                 each ans in val.answers
                     li= ans
