@@ -13,11 +13,11 @@ block content
     div#questionblock
         each val in questlist
             // p #{val.question_id} -- if val has an id associated with it, it should also be sent in post req.
-            form(name=val.question method='POST' action='submit_handler.file' class='question' id=val.question_id) #{val.question}
+            form(name=val.id method='POST' action='/submit/quiz' class='question' id="quest" + val.id) #{val.question}
                 ul
                 each ans in val.answers
-                    input(type='radio', name= val.question, value= {ans})
-                    |#{ans}
+                    input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
+                    div(class="anschoice")= ans.text
                     br
                 button(type='submit')#btn.btn-primary Submit Answer
             
@@ -33,7 +33,7 @@ block content
                 url = $form.attr('action');
                 /* get the question and answer choice selected */
                 quest = $form.attr('name');
-                answer = $('input:checked').val();
+                answer = $('#quest' + quest + ' input:checked').val();
                 //questid = $form.attr('id');
                 /* printing variables before post call is made */
                 console.log(event);
@@ -44,7 +44,13 @@ block content
                 var posting = $.post( url, { question: quest, answer_choice: answer } );
                 /* Alerts the results */
                 posting.done(function( data ) {
-                alert('success');
+                //alert('success');
+                console.log(data);
+                if(data.correct) {
+                    $("#ans"+data.answer_id + " + .anschoice").css('color','green');
+                } else {
+                    $("#ans"+data.answer_id + " + .anschoice").css('color','red');
+                }
                 /* 
                 code that will alter the question to show correct/incorrect,
                 and number of attempts will go here

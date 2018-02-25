@@ -62,11 +62,15 @@ function getQuestions(cb) {
         i = 0;
         while(i < questions.length) {
             id = questions[i].question_id;
-            idx = result.questlist.push({ id: id, question: questions[i].question, answers: [] }) - 1;
-            result.questlist[idx].answers.push(questions[i].answer);
+            idx = result.questlist.push({ id: id, question: questions[i].question, answer_id: null , answers: [] }) - 1;
+            result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
             i++;
             while(questions[i] != undefined && questions[i].question_id == id) {
-                result.questlist[idx].answers.push(questions[i].answer);
+                if(questions[i].correct_answer >= 1) {
+                    result.questlist[idx].answer_id = questions[i].answer_id;
+                }
+                //result.questlist.answer_id = (parseInt(questions[i].correct_answer) >= 1) ? questions[i].answer_id : null;
+                result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
                 i++;
             }
         }
@@ -82,7 +86,21 @@ getQuestions((quest) => {
 })
 
 
+app.post('/submit/quiz', (req, res) => {
+    console.log("RECIEVED ANSWER", req.body);
+    for(let i=0; i<questions.questlist.length; i++) {
+        if(questions.questlist[i].id == req.body.question) {
+            if(questions.questlist[i].answer_id == req.body.answer_choice) {
+                res.send({ correct: true, answer_id: req.body.answer_choice })
+            } else {
+                res.send({ correct: false, answer_id: req.body.answer_choice })
+            }
+        }
+    }
+    
+})
+
 app.get('/', (req, res) => {
-    //console.log(questions);
+    console.log(questions);
     res.render('index', questions);
 })

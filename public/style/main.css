@@ -3,6 +3,10 @@
     font-weight: bold;
 }
 
+.anschoice {
+    display: inline;
+}
+
 #questionBox {
     align: center;
     border-radius: 10px;
