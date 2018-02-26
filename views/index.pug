@@ -1,28 +1,26 @@
 extends layout.pug
 
-
-
-
-
 block content
- 
+
     head
         script(src='http://code.jquery.com/jquery-1.9.1.js')
-    
-    
+
+
     div#questionblock
         each val in questlist
+          div.well
             // p #{val.question_id} -- if val has an id associated with it, it should also be sent in post req.
             form(name=val.id method='POST' action='/submit/quiz' class='question' id="quest" + val.id) #{val.question}
                 ul
                 each ans in val.answers
                     input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
-                    div(class="anschoice")= ans.text
+                    div(class="anschoice")=  " "+ ans.text
                     br
+                br
                 button(type='submit')#btn.btn-primary Submit Answer
-            
-            
-            
+
+
+
         script(type='text/javascript').
                 /* attach a submit handler to all forms in the DOM */
                 $('form').submit(function(event) {
@@ -51,10 +49,10 @@ block content
                 } else {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','red');
                 }
-                /* 
+                /*
                 code that will alter the question to show correct/incorrect,
                 and number of attempts will go here
                 */
-                
+
                 });
                 });

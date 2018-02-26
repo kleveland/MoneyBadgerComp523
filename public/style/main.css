@@ -1,10 +1,16 @@
-.question {
-    background-color: beige;
-    font-weight: bold;
-}
-
 .anschoice {
     display: inline;
+    font-size: 15px;
+}
+.question {
+    font-size: 15px;
+}
+.well{
+  margin:2%
+  align: center;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 5%;
 }
 
 #questionBox {
