@@ -2,7 +2,7 @@ module.exports = function (app, questions) {
 
     app.get('/', (req, res) => {
         console.log(questions);
-        questions.onyen = req.get("HTTP_UID");
+        questions.onyen = req.getHeader("HTTP_UID");
         if(!questions.onyen) {
             questions.onyen = "default";
         }
