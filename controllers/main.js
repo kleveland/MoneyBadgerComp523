@@ -3,6 +3,7 @@ module.exports = function (app, questions) {
     app.get('/', (req, res) => {
         console.log(questions);
         questions.onyen = req.getHeader("HTTP_UID");
+        console.log(req.getHeader("HTTP_UID"));
         if(!questions.onyen) {
             questions.onyen = "default";
         }
