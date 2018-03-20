@@ -2,10 +2,12 @@ module.exports = function (app, questions) {
 
     app.get('/', (req, res) => {
         console.log(questions);
-        questions.onyen = "filler";
+        questions.onyen = req.headers.uid;
+        questions.pid = req.headers.pid;
         console.log(req.headers);
         if(!questions.onyen) {
             questions.onyen = "default";
+            questions.pid = "default pid";
         }
         console.log(questions.onyen);
         res.render('index', questions);
