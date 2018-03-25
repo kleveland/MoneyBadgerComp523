@@ -15,7 +15,7 @@ app.use(express.static('./public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-
+/*
 let config = {
     ip: "localhost",
     port: 3000,
@@ -28,6 +28,22 @@ let config = {
     }
 };
 */
+
+
+let config = {
+    ip: "localhost",
+    port: 3000,
+    database: {
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "comp523",
+        port: "3306"
+    }
+};
+
+
+
 
 console.log(config);
 
@@ -65,15 +81,18 @@ function getQuestions(cb) {
         questions = result;
         //console.log(questions)
         result = { questlist: [] }
+        answers = { questlist: [] }
+
         i = 0;
         while(i < questions.length) {
             id = questions[i].question_id;
-            idx = result.questlist.push({ id: id, question: questions[i].question, answer_id: null , answers: [] }) - 1;
+            idx = result.questlist.push({ id: id, question: questions[i].question, answers: [] }) - 1;
+            answers.questlist.push({ id: id, answer_id: null });
             result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
             i++;
             while(questions[i] != undefined && questions[i].question_id == id) {
                 if(questions[i].correct_answer >= 1) {
-                    result.questlist[idx].answer_id = questions[i].answer_id;
+                    answers.questlist[idx].answer_id = questions[i].answer_id;
                 }
                 //result.questlist.answer_id = (parseInt(questions[i].correct_answer) >= 1) ? questions[i].answer_id : null;
                 result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
@@ -90,6 +109,6 @@ getQuestions((quest) => {
     questions = quest;
 
 
-require('./controllers/main.js')(app,questions);
+require('./controllers/main.js')(app,questions,answers);
     //console.log(questions.questlist[0].answer);
 })

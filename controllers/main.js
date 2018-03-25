@@ -1,4 +1,4 @@
-module.exports = function (app, questions) {
+module.exports = function (app, questions, answers) {
 
     app.get('/', (req, res) => {
         console.log(questions);
@@ -17,7 +17,7 @@ module.exports = function (app, questions) {
         console.log("RECIEVED ANSWER", req.body);
         for (let i = 0; i < questions.questlist.length; i++) {
             if (questions.questlist[i].id == req.body.question) {
-                if (questions.questlist[i].answer_id == req.body.answer_choice) {
+                if (answers.questlist[i].answer_id == req.body.answer_choice) {
                     res.send({
                         correct: true,
                         answer_id: req.body.answer_choice
