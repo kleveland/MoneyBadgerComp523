@@ -6,10 +6,10 @@ html
     link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
     link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
   body
-    div#navbar.row
-      div.cols
-            a(href="/home").align-self-start.glyphicon.glyphicon-home.refs  Home
-            a(href="/grades").align-self-start.glyphicon.glyphicon-list-alt.refs  Grades
-            h2.align-self-center.text-primary Quiz
-            button(onclick='something()').align-self-end.btn.btn-danger.glyphicon.glyphicon-log-out  Log Out
+    nav#navbar.row
+      div.container-fluid
+        a(href="/home").align-self-start.glyphicon.glyphicon-home.refs  Home
+        a(href="/grades").align-self-start.glyphicon.glyphicon-list-alt.refs  Grades
+        h2.align-self-center.text-primary Quiz
+        button(onclick='something()').align-self-end.btn.btn-danger.glyphicon.glyphicon-log-out  Log Out
     block content
