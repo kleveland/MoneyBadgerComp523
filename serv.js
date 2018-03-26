@@ -43,10 +43,6 @@ let config = {
 };
 
 
-
-
-console.log(config);
-
 config.port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 config.ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
@@ -57,6 +53,9 @@ if (process.env.OPENSHIFT_MYSQL_PASSWORD) {
     config.database.password = process.env.OPENSHIFT_MYSQL_PASSWORD;
     config.database.database = process.env.OPENSHIFT_MYSQL_DATABASE;
 }
+
+
+console.log(config);
 
 var con = mysql.createConnection({
     host: config.database.host,
