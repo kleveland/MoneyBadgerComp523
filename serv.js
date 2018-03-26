@@ -62,7 +62,8 @@ var con = mysql.createConnection({
     host: config.database.host,
     user: config.database.user,
     password: config.database.password,
-    database: config.database.database
+    database: config.database.database,
+    port: config.database.port
 });
 
 con.query("SELECT * FROM questions", function(err, result, fields) {
