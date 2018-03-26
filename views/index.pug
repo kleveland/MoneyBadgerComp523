@@ -10,7 +10,8 @@ block content
         each val in questlist
           div.well
             // p #{val.question_id} -- if val has an id associated with it, it should also be sent in post req.
-            form(name=val.id method='POST' action='/submit/quiz' class='question' id="quest" + val.id) #{val.question}
+            form(name=val.id method='POST' action='/submit/quiz' class='question' id="quest" + val.id)=val.question
+                div(id="attempts")
                 ul
                 each ans in val.answers
                     input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
@@ -53,6 +54,7 @@ block content
                 } else {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','red');
                     $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
+                    $("#quest"+quest+" #attempts").html(data.attempts);
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                 }
