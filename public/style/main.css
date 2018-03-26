@@ -35,7 +35,7 @@ body {
     display: inline;
 }
 
-#navbar button {
+#navbar .logout {
     float: right;
     display: inline;
     padding: .2em 1em;
