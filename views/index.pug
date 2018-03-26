@@ -46,10 +46,15 @@ block content
                 console.log(data);
                 if(data.correct) {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','green');
+                    $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
+                    $('input[type=radio]#ans'+data.answer_id).remove();
+
                     $("#quest"+quest+" :input").prop("disabled", true);
                 } else {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','red');
-                    $("#ans"+data.answer_id).prop('disabled', true);
+                    $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
+                    $('input[type=radio]#ans'+data.answer_id).remove();
+
                 }
                 /*
                 code that will alter the question to show correct/incorrect,

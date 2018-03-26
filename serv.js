@@ -15,7 +15,7 @@ app.use(express.static('./public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-/*
+
 let config = {
     ip: "localhost",
     port: 3000,
@@ -27,9 +27,9 @@ let config = {
         port: "8889"
     }
 };
-*/
 
 
+/*
 let config = {
     ip: "localhost",
     port: 3000,
@@ -42,7 +42,7 @@ let config = {
     }
 };
 
-
+*/
 
 
 console.log(config);
