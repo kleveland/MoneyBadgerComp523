@@ -46,8 +46,10 @@ block content
                 console.log(data);
                 if(data.correct) {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','green');
+                    //$(data.form).prop('disabled', true);
                 } else {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','red');
+                    $("#ans"+data.answer_id).prop('disabled', true);
                 }
                 /*
                 code that will alter the question to show correct/incorrect,
