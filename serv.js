@@ -73,12 +73,6 @@ con.connect((err) => {
   console.log('Connection established');
 });
 
-con.end((err) => {
-  // The connection is terminated gracefully
-  // Ensures all previously enqueued queries are still
-  // before sending a COM_QUIT packet to the MySQL server.
-});
-
 con.query("SELECT * FROM questions", function(err, result, fields) {
     if(err) {
         console.log("Could not connect to host", config.database.host);
@@ -123,5 +117,11 @@ getQuestions((quest) => {
 
 
 require('./controllers/main.js')(app,questions,answers);
+
+    con.end((err) => {
+  // The connection is terminated gracefully
+  // Ensures all previously enqueued queries are still
+  // before sending a COM_QUIT packet to the MySQL server.
+});
     //console.log(questions.questlist[0].answer);
 })
