@@ -65,14 +65,6 @@ var con = mysql.createConnection({
     port: config.database.port
 });
 
-con.connect((err) => {
-  if(err){
-    console.log('Error connecting to Db');
-    return;
-  }
-  console.log('Connection established');
-});
-
 con.query("SELECT * FROM Questions", function(err, result, fields) {
     if(err) {
         console.log("Could not connect to host", config.database.host);
@@ -119,10 +111,5 @@ getQuestions((quest) => {
 
 require('./controllers/main.js')(app,questions,answers);
 
-    con.end((err) => {
-  // The connection is terminated gracefully
-  // Ensures all previously enqueued queries are still
-  // before sending a COM_QUIT packet to the MySQL server.
-});
     //console.log(questions.questlist[0].answer);
 })
