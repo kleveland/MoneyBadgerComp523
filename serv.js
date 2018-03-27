@@ -73,7 +73,7 @@ con.connect((err) => {
   console.log('Connection established');
 });
 
-con.query("SELECT * FROM questions", function(err, result, fields) {
+con.query("SELECT * FROM Questions", function(err, result, fields) {
     if(err) {
         console.log("Could not connect to host", config.database.host);
         throw err;
@@ -84,7 +84,7 @@ let serv = app.listen(config.port, config.ip, () => console.log('Example app lis
 
 
 function getQuestions(cb) {
-    con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id", function (err, result, fields) {
+    con.query("SELECT * FROM Questions INNER JOIN Answers ON Questions.question_id = Answers.question_id", function (err, result, fields) {
         if (err) throw err;
         questions = result;
         //console.log(questions)
