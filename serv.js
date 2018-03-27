@@ -76,6 +76,7 @@ con.connect((err) => {
 con.query("SELECT * FROM questions", function(err, result, fields) {
     if(err) {
         console.log("Could not connect to host", config.database.host);
+        throw err;
     }
 })
 
