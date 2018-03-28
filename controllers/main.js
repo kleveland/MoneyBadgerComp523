@@ -1,6 +1,12 @@
-module.exports = function (app, dbquiz) {
+module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/', (req, res) => {
+        if (req.headers.pid) {
+            dbuser.findUser(req.headers.pid, (user) => {
+                console.log("Recieved user");
+                console.log(user);
+            });
+        }
         dbquiz.getQuestions((result, answers) => {
             req.session.questions = result;
             req.session.answers = answers;

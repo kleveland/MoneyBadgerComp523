@@ -81,8 +81,11 @@ con.query("SELECT * FROM Questions", function (err, result, fields) {
 
 let serv = app.listen(config.port, config.ip, () => console.log('Example app listening ' + config.ip + ':' + config.port + '!'))
 
-const dbquiz = require('./models/dbquiz.js');
+const dbquiz = require('./models/dbquiz.js'),
+      dbuser = require('./models/dbuser.js');
+dbuser.setCon(con);
 dbquiz.setCon(con);
 
-require('./controllers/main.js')(app, dbquiz);
+
+require('./controllers/main.js')(app, dbquiz, dbuser);
 //console.log(questions.questlist[0].answer);
