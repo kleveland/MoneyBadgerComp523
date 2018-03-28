@@ -2,7 +2,8 @@ const express = require('express'),
     path = require('path'),
     mysql = require('mysql'),
     app = express(),
-    bodyparser = require('body-parser');
+    bodyparser = require('body-parser'),
+    session = require('express-session');
 
 app.set('view engine', 'pug');
 app.use(bodyparser.json()); // to support JSON-encoded bodies
@@ -12,6 +13,12 @@ app.use(bodyparser.urlencoded({ // to support URL-encoded bodies
 
 //app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(express.static('./public'));
+app.use(session({
+    secret: 'testsecrettestsecrettestsecret',
+    cookie: {
+        maxAge: 60000
+    }
+}))
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
@@ -65,8 +72,8 @@ var con = mysql.createConnection({
     port: config.database.port
 });
 
-con.query("SELECT * FROM Questions", function(err, result, fields) {
-    if(err) {
+con.query("SELECT * FROM Questions", function (err, result, fields) {
+    if (err) {
         console.log("Could not connect to host", config.database.host);
         throw err;
     }
@@ -74,42 +81,8 @@ con.query("SELECT * FROM Questions", function(err, result, fields) {
 
 let serv = app.listen(config.port, config.ip, () => console.log('Example app listening ' + config.ip + ':' + config.port + '!'))
 
+const dbquiz = require('./models/dbquiz.js');
+dbquiz.setCon(con);
 
-function getQuestions(cb) {
-    con.query("SELECT * FROM Questions INNER JOIN Answers ON Questions.question_id = Answers.question_id", function (err, result, fields) {
-        if (err) throw err;
-        questions = result;
-        //console.log(questions)
-        result = { questlist: [] }
-        answers = { questlist: [] }
-
-        i = 0;
-        while(i < questions.length) {
-            id = questions[i].question_id;
-            idx = result.questlist.push({ id: id, question: questions[i].question, answers: [] }) - 1;
-            answers.questlist.push({ id: id, answer_id: null });
-            result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
-            i++;
-            while(questions[i] != undefined && questions[i].question_id == id) {
-                if(questions[i].correct_answer >= 1) {
-                    answers.questlist[idx].answer_id = questions[i].answer_id;
-                }
-                //result.questlist.answer_id = (parseInt(questions[i].correct_answer) >= 1) ? questions[i].answer_id : null;
-                result.questlist[idx].answers.push({text: questions[i].answer, ans_id: questions[i].answer_id });
-                i++;
-            }
-        }
-        cb(result)
-    });
-}
-
-let questions;
-
-getQuestions((quest) => {
-    questions = quest;
-
-
-require('./controllers/main.js')(app,questions,answers);
-
-    //console.log(questions.questlist[0].answer);
-})
+require('./controllers/main.js')(app, dbquiz);
+//console.log(questions.questlist[0].answer);
