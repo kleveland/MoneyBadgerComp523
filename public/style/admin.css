@@ -1,38 +1,17 @@
-body {
-    background-image: linear-gradient(to right top, #3bc7f9, #91d2ff, #c5deff, #e8edff, #ffffff);
-    background-size: cover;
-    background-repeat: no-repeat;
+body{
+    background-color: #F8F8F8 !important;
 }
-
-.anschoice {
-    display: inline;
-    font-size: 15px;
-    font-weight: bold;
-}
-.question {
-    font-size: 18px;
-    font-weight: bold;
-}
-.well{
-  margin:2%
-  align: center;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 5%;
-}
-
-#navbar {
-    background-color: transparent;
+body #navbar {
+    background-color: #181818 !important;
     float: center;
     width: 100%;
     text-align: center;
     opacity: 0.85;
 }
-
 #navbar h2 {
-    font-family: Lobster, Monospace;
-    color: BLACK;
+    color : white;
     display: inline;
+    font-family: Times, Times New Roman, serif;
 }
 
 #navbar .logout {
@@ -46,17 +25,15 @@ body {
     list-style-type: none;
     float: left;
     display: inline;
-    text-decoration: none;
     padding: .2em 1em;
     margin-left: 10px;
-    color: Black;
+    color: White;
     font-size: 20px;
     position: relative;
-    text-decoration: none;
     display: inline-block;
 }
 .refs:hover {
-    color: #000;
+    color: White;
     text-decoration: none;
 }
 
@@ -72,4 +49,24 @@ body {
 .refs:hover:after {
     transform: scaleX(1);
     transform-origin: 0 50%;
+}
+
+
+.createQuiz{
+  border: 2px;
+  margin-top: 50px;
+  background-color: white;
+  box-shadow: 1px 1px 5px #555 inset;
+}
+
+.quizCreateHeader{
+  background: linear-gradient(to right, #00d2ff, #3a7bd5);
+  text-align: center;
+  margin-top: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
+  color: white;
+  font-size: 30px;
+  padding: 5px;
+
 }

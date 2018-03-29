@@ -1,0 +1,16 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='./style/admin.css')
+    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+  body
+    nav#navbar.row
+      div.container-fluid
+        a(href="/createQuiz").align-self-start.glyphicon.glyphicon-pencil.refs  Create
+        a(href="/manageStudents").align-self-start.glyphicon.glyphicon-list-alt.refs  Manage
+        a(href="/exportGrades").align-self-start.glyphicon.glyphicon-download-alt.refs  Export
+        h2.align-self-center.text-primary Admin
+        a(href="https://sso.unc.edu/idp/logout.jsp").align-self-end.btn.btn-danger.glyphicon.glyphicon-log-out.logout  Log Out
+    block content

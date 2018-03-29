@@ -1,0 +1,26 @@
+extends layoutAdmin.pug
+block content
+    head
+        script(src='http://code.jquery.com/jquery-1.9.1.js')
+    .col-md-6.col-md-offset-3.createQuiz
+        div.quizCreateHeader
+          h1.display-4.m-b-2 Create Quiz
+        br
+        form(method='POST' action='/create/quiz' )
+          div.form-group
+            label(for='quizName') Quiz Name:
+            input#quizName.form-control(type='text', name='quizName')
+          div.form-group
+            label(for='numberOfQuestions') Number of Questions:
+            input#numberOfQuestions.form-control(type='number', name='numberOfQuestions')
+          div.form-group
+            label(for='totalPoints') Total Points:
+            input#totalPoints.form-control(type='number', name='totalPoints')
+          div.form-group
+            label(for='releaseDate') Release Date and Time:
+            input#releaseDate.form-control(type='datetime-local' name='releaseDate')
+          div.form-group
+            label(for='dueDate') Due Date and Time:
+            input#dueDate.form-control(type='datetime-local' name='dueDate')
+          button.btn.btn-primary(type='submit') Create
+        br
