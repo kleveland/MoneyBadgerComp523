@@ -1,27 +1,24 @@
 extends layout.pug
 
 block content
-
-    head
-        script(src='http://code.jquery.com/jquery-1.9.1.js')
-
-
-    div#questionblock
-        each val in questlist
-          div.well
-            // p #{val.question_id} -- if val has an id associated with it, it should also be sent in post req.
-            form(name=val.id method='POST' action='/submit/quiz' class='question' id="quest" + val.id)=val.question
-                div(id="attempts")
-                ul
-                each ans in val.answers
-                    input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
-                    div(class="anschoice")=  " "+ ans.text
-                    br
-                br
-                button(type='submit')#btn.btn-primary Submit Answer
-
-
-
+    div.container-fluid
+        div.row
+            div.col.mx-1
+                each val, index in questlist
+                            div.card.my-3
+                                form(name=val.id method='POST' action='/submit/quiz' id="quest" + val.id)
+                                    div.card-header="Question "+(index+1)
+                                    div.card-body
+                                        div(class="question")=val.question
+                                        ul
+                                        each ans in val.answers
+                                            input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
+                                            div(class="anschoice")=  " "+ ans.text
+                                            br
+                                    div.card-footer
+                                        button(type='submit').btn.btn-primary Submit Answer
+                                        h6(class="attempts") Attempts
+                                            span.badge.badge-danger 0
         script(type='text/javascript').
                 /* attach a submit handler to all forms in the DOM */
                 $('form').submit(function(event) {
@@ -48,13 +45,15 @@ block content
                 if(data.correct) {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','green');
                     $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
+                    $("#quest"+quest+" .attempts span").removeClass("badge-danger");
+                    $("#quest"+quest+" .attempts span").addClass("badge-success");
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                     $("#quest"+quest+" :input").prop("disabled", true);
                 } else {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','red');
                     $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
-                    $("#quest"+quest+" #attempts").html(data.attempts);
+                    $("#quest"+quest+" .attempts span").html(data.attempts);
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                 }

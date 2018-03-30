@@ -6,6 +6,8 @@ module.exports = function (app, dbquiz, dbuser) {
                 console.log("Recieved user");
                 console.log(user);
             });
+        } else {
+            console.log("no pid header");
         }
         dbquiz.getQuestions((result, answers) => {
             req.session.questions = result;

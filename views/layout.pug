@@ -2,14 +2,26 @@ doctype html
 html
   head
     title= title
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
     link(rel='stylesheet', href='./style/main.css')
-    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    link(rel="stylesheet" href="./style/bootstrap.min.css")
+    script(src="./js/jquery-3.2.1.slim.min.js" crossorigin="anonymous")
+    script(src="./js/popper.min.js" crossorigin="anonymous")
+    script(src="./js/bootstrap.min.js" crossorigin="anonymous")
+
   body
-    nav#navbar.row
-      div.container-fluid
-        a(href="/home").align-self-start.glyphicon.glyphicon-home.refs  Home
-        a(href="/grades").align-self-start.glyphicon.glyphicon-list-alt.refs  Grades
-        h2.align-self-center.text-primary Quiz
-        a(href="https://sso.unc.edu/idp/logout.jsp").align-self-end.btn.btn-danger.glyphicon.glyphicon-log-out.logout  Log Out
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+        a(href="#").navbar-brand Quiz App
+        button(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation").navbar-toggler
+            span.navbar-toggler-icon
+        div.collapse.navbar-collapse#navbarSupportedContent
+            ul.navbar-nav.mr-auto
+                li.nav-item.active
+                    a(href="/home").nav-link Home
+                li.nav-item
+                    a(href="/grades").nav-link Grades
+            ul.navbar-nav
+                li.nav-item
+                    button.navbar-btn.btn.btn-danger  Log Out
     block content
