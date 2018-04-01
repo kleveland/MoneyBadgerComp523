@@ -1,0 +1,24 @@
+extends layoutAdmin.pug
+block content
+    head
+        script(src='http://code.jquery.com/jquery-1.9.1.js')
+    .col-md-6.col-md-offset-3.createQuiz
+        div.quizCreateHeader
+          h1.display-4.m-b-2 Quiz Editor
+        br
+        form(method='POST' action='/quiz' )
+          -for(var i=0; i<2; i++)
+            div.form-group
+                label(for='question') Question:
+                input#question.form-control(type='text', name='question')
+            div.form-group
+                label(for='answers') Answers:
+                input#answers.form-control(type='text',
+                name='answer')
+            button.btn(type='button') +
+            br
+            br
+          br
+          br
+          button.btn.btn-primary(type='submit') Create
+        br
