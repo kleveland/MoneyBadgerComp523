@@ -31,7 +31,7 @@ module.exports = function (app, dbquiz, dbuser) {
     })
 
     app.get('/logout', (req, res) => {
-        req.logout();
+        req.session.destroy();
         res.redirect('/Shibboleth.sso/Logout?return=https://sso.unc.edu/idp/logout.jsp')
     })
 
