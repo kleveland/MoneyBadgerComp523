@@ -4,6 +4,8 @@
 
 .anschoice.correct {
     color: green;
+    font-weight: bold;
+
 }
 .answers {
     margin-left: 1em;
