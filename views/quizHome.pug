@@ -19,7 +19,7 @@ block content
                             tr
                                 th(scope="row")=(index+1)
                                 td=val.quiz_name
-                                td=val.start_date
-                                td=val.due_date
+                                td=new Date(val.start_date)
+                                td=new Date(val.due_date)
                                 td
                                     a(href="/quiz/"+val.quiz_id) View Quiz

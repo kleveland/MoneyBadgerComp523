@@ -17,11 +17,13 @@ module.exports = function (app, dbquiz, dbuser) {
     });
 
     app.post('/admin/addQuiz', (req, res) => {
-        dbquiz.postQuiz(req.body.name, req.body.releaseDate, req.body.dueDate, req.body.questions, (quizid) => {
-            dbuser.verifyAdmin(req, res, (adm) => {
-                console.log("Quiz ID", quizid);
-                res.sendStatus(200);
-            });
-        })
+        dbuser.login(req, (user) => {
+            dbquiz.postQuiz(req.body.name, req.body.releaseDate, req.body.dueDate, req.body.questions, (quizid) => {
+                dbuser.verifyAdmin(req, res, (adm) => {
+                    console.log("Quiz ID", quizid);
+                    res.sendStatus(200);
+                });
+            })
+        });
     });
 }
