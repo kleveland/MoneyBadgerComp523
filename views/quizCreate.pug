@@ -128,7 +128,18 @@ block content
             let dat = {};
             dat.name = $("#quizName").val();
             dat.releaseDate = $("#releaseDate").val();
+            console.log("(" + dat.releaseDate + ")");
+            if(dat.releaseDate == "") {
+                dat.releaseDate = new Date();
+            }
+            console.log("(" + dat.releaseDate + ")");
             dat.dueDate = $("#dueDate").val();
+            console.log("(" + dat.dueDate + ")");
+            if(dat.dueDate == "") {
+                dat.dueDate = new Date();
+                dat.dueDate.setYear(dat.dueDate.getYear() + 1);
+            }
+            console.log("(" + dat.dueDate + ")");
             dat.questions = questions;
             let posting = $.post('/admin/addQuiz', dat);
             posting.done(function(data) {

@@ -17,7 +17,7 @@ module.exports = function (app, dbquiz, dbuser) {
     app.post('/admin/addQuiz', (req, res) => {
         dbquiz.postQuiz(req.body.name, req.body.releaseDate, req.body.dueDate, req.body.questions, (quizid) => {
             console.log("Quiz ID", quizid);
-            res.send({status: 200, dat: quizid});
+            res.sendStatus(200);
         })
     });
 }
