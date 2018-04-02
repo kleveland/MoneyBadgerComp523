@@ -16,113 +16,115 @@ block content
                 div.modal-footer
                     button(type="button" id="closebut" data-dismiss="modal").btn.btn-secondary Close
                     button(type="button" id="savebut" ).btn.btn-primary Save Changes
-    div.quizCreateHeader
-        h2.display-4.m-b-2 Create Quiz
-        button.btn.btn-primary(type='submit' onClick="addQuiz()") Create
-    div.form-group
-        label(for='quizName') Quiz Name:
-        input#quizName.form-control(type='text' name='quizName')
-    div.form-group
-        label(for='releaseDate') Release Date and Time:
-        input#releaseDate.form-control(type='datetime-local' name='releaseDate')
-    div.form-group
-        label(for='dueDate') Due Date and Time:
-        input#dueDate.form-control(type='datetime-local' name='dueDate')
-    div.question-list
-    button(type="button" onclick="addQuestion()").btn.btn-primary Add Question
-    script.
-        let questions = [];
+    div.quizCreate
+      div.quizCreateHeader
+          h2.display-4.m-b-2 Create Quiz
+      div.form-group
+          label(for='quizName') Quiz Name:
+          input#quizName.form-control(type='text' name='quizName')
+      div.form-group
+          label(for='releaseDate') Release Date and Time:
+          input#releaseDate.form-control(type='datetime-local' name='releaseDate')
+      div.form-group
+          label(for='dueDate') Due Date and Time:
+          input#dueDate.form-control(type='datetime-local' name='dueDate')
+      div.question-list
+      button(type="button" onclick="addQuestion()").btn.btn-primary Add Question
+      div.createQuizButton
+        button.btn.btn-primary.btn-success.float-right(type='submit' onClick="addQuiz()") Publish Quiz
+      script.
+          let questions = [];
 
-        $(document).on("click","#choice-delete", function() {
-            console.log("deleted choice");
-            $(this).parent().remove();
-        })
+          $(document).on("click","#choice-delete", function() {
+              console.log("deleted choice");
+              $(this).parent().remove();
+          })
 
-        function addQuestion() {
-            $(".modal-title").html("Add Question");
-            $(".modal-body").html("<div id='editor'></div>")
-            $("#editor").trumbowyg();
-            $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
-            $("#addchoice").on("click", function() {
-                $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
-            })
-            $("#closebut").html("Cancel");
-            $("#savebut").html("Add Question");
-            $(document).on("click","#savebut",function() {
-                let answers = [];
-                $(".choice-entry").each(function(index, el) {
-                    answers.push({text: $(this).val(), correct: false });
-                })
-                $(".anscorrect").each(function(index, el) {
-                    answers[index].correct = $(this).prop("checked");
-                })
-                console.log($("#editor").trumbowyg("html"));
-                console.log(answers);
-                questions.push({question_html: $("#editor").trumbowyg("html"), answers: answers });
-                drawQuestions();
-                $(document).off("click","#savebut");
-                $("#editmodal").modal('hide');
-            })
-            $("#editmodal").modal('show');
-        }
+          function addQuestion() {
+              $(".modal-title").html("Add Question");
+              $(".modal-body").html("<div id='editor'></div>")
+              $("#editor").trumbowyg();
+              $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
+              $("#addchoice").on("click", function() {
+                  $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
+              })
+              $("#closebut").html("Cancel");
+              $("#savebut").html("Add Question");
+              $(document).on("click","#savebut",function() {
+                  let answers = [];
+                  $(".choice-entry").each(function(index, el) {
+                      answers.push({text: $(this).val(), correct: false });
+                  })
+                  $(".anscorrect").each(function(index, el) {
+                      answers[index].correct = $(this).prop("checked");
+                  })
+                  console.log($("#editor").trumbowyg("html"));
+                  console.log(answers);
+                  questions.push({question_html: $("#editor").trumbowyg("html"), answers: answers });
+                  drawQuestions();
+                  $(document).off("click","#savebut");
+                  $("#editmodal").modal('hide');
+              })
+              $("#editmodal").modal('show');
+          }
 
-        function drawQuestions() {
-            console.log(questions);
-            $(".question-list").empty();
-            for(let i=0; i<questions.length; i++) {
-                $(".question-list").append('<div class="card my-3" class="question-entry" id=""' + i + '><div class="card-header">Question ' + (i+1) + '</div><div class="card-body" id="bod'+ i +'"></div><div class="card-footer"><button onClick="editQuestion('+ i +')" class="btn btn-primary quest-but">Edit Question</button><button onClick="deleteQuestion('+ i +')" class="btn btn-danger quest-but">Delete Question</button></div></div>');
-                $("#bod"+i).append(questions[i].question_html);
-                $("#bod"+i).append('<div class="answers"></div>');
-                for(let j=0; j<questions[i].answers.length; j++) {
-                    if(questions[i].answers[j].correct) {
-                        $("#bod"+i+" .answers").append('<div class="anschoice correct">' + questions[i].answers[j].text + '</div>');
-                    } else {
-                        $("#bod"+i+" .answers").append('<div class="anschoice">' + questions[i].answers[j].text + '</div>');
-                    }
-                }
-            }
-        }
+          function drawQuestions() {
+              console.log(questions);
+              $(".question-list").empty();
+              for(let i=0; i<questions.length; i++) {
+                  $(".question-list").append('<div class="card my-3" class="question-entry" id=""' + i + '><div class="card-header">Question ' + (i+1) + '</div><div class="card-body" id="bod'+ i +'"></div><div class="card-footer"><button onClick="editQuestion('+ i +')" class="btn btn-primary quest-but">Edit Question</button><button onClick="deleteQuestion('+ i +')" class="btn btn-danger quest-but">Delete Question</button></div></div>');
+                  $("#bod"+i).append(questions[i].question_html);
+                  $("#bod"+i).append('<div class="answers"></div>');
+                  for(let j=0; j<questions[i].answers.length; j++) {
+                      if(questions[i].answers[j].correct) {
+                          $("#bod"+i+" .answers").append('<div class="anschoice correct">' + questions[i].answers[j].text + '</div>');
+                      } else {
+                          $("#bod"+i+" .answers").append('<div class="anschoice">' + questions[i].answers[j].text + '</div>');
+                      }
+                  }
+              }
+          }
 
-        function deleteQuestion(id) {
-            questions.splice(id, 1);
-            drawQuestions();
-        }
+          function deleteQuestion(id) {
+              questions.splice(id, 1);
+              drawQuestions();
+          }
 
-        function editQuestion(id) {
-            console.log(id);
-            $(".modal-title").html("Edit Question");
-            $(".modal-body").html("<div id='editor'></div>")
-            $("#editor").trumbowyg();
-            $("#editor").trumbowyg("html",questions[id].question_html);
-            $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
-            for(let i=0; i<questions[id].answers.length; i++) {
-                $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span> </div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" value="' + questions[id].answers[i].text + '" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
-            }
-            $(".anscorrect").each(function(index, el) {
-                $(this).prop("checked", questions[id].answers[index].correct);
-            });
-            $("#addchoice").on("click", function() {
-                $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
-            })
-            $("#closebut").html("Cancel");
-            $("#savebut").html("Save Question");
-            $(document).on("click","#savebut",function() {
-                let answers = [];
-                $(".choice-entry").each(function(index, el) {
-                    answers.push({text: $(this).val(), correct: false });
-                })
-                $(".anscorrect").each(function(index, el) {
-                    answers[index].correct = $(this).prop("checked");
-                })
-                console.log($("#editor").trumbowyg("html"));
-                console.log(answers);
-                questions[id] = {question_html: $("#editor").trumbowyg("html"), answers: answers };
-                drawQuestions();
-                $(document).off("click","#savebut");
-                $("#editmodal").modal('hide');
-            })
-            $("#editmodal").modal('show');
-        }
+          function editQuestion(id) {
+              console.log(id);
+              $(".modal-title").html("Edit Question");
+              $(".modal-body").html("<div id='editor'></div>")
+              $("#editor").trumbowyg();
+              $("#editor").trumbowyg("html",questions[id].question_html);
+              $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
+              for(let i=0; i<questions[id].answers.length; i++) {
+                  $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span> </div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" value="' + questions[id].answers[i].text + '" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
+              }
+              $(".anscorrect").each(function(index, el) {
+                  $(this).prop("checked", questions[id].answers[index].correct);
+              });
+              $("#addchoice").on("click", function() {
+                  $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
+              })
+              $("#closebut").html("Cancel");
+              $("#savebut").html("Save Question");
+              $(document).on("click","#savebut",function() {
+                  let answers = [];
+                  $(".choice-entry").each(function(index, el) {
+                      answers.push({text: $(this).val(), correct: false });
+                  })
+                  $(".anscorrect").each(function(index, el) {
+                      answers[index].correct = $(this).prop("checked");
+                  })
+                  console.log($("#editor").trumbowyg("html"));
+                  console.log(answers);
+                  questions[id] = {question_html: $("#editor").trumbowyg("html"), answers: answers };
+                  drawQuestions();
+                  $(document).off("click","#savebut");
+                  $("#editmodal").modal('hide');
+              })
+              $("#editmodal").modal('show');
+          }
 
         function addQuiz() {
             let dat = {};
