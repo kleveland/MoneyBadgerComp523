@@ -1,0 +1,25 @@
+extends layout.pug
+
+block content
+    div.container-fluid
+      div.quizCreateHeader
+        h2.display-4.m-b-2 Available Quizzes
+        div.row
+            div.col.mx-1
+                table.table.table-hover
+                    thead
+                        tr
+                            th(scope="col") #
+                            th(scope="col") Name
+                            th(scope="col") Open Date
+                            th(scope="col") Due Date
+                            th(scope="col")
+                    tbody
+                        each val, index in quizes
+                            tr
+                                th(scope="row")=(index+1)
+                                td=val.quiz_name
+                                td=val.start_date
+                                td=val.due_date
+                                td
+                                    a(href="/quiz/"+val.quiz_id) View Quiz

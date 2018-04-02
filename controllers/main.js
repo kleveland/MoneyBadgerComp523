@@ -3,6 +3,26 @@ module.exports = function (app, dbquiz, dbuser) {
     app.get('/', (req, res) => {
         dbuser.login(req, (user) => {
             dbquiz.getQuizes((quizes) => {
+              req.session.dat.quizes = quizes;
+              var availableQuizzes = [];
+                for (i = 0; i < req.session.dat.quizes.length; i++) {
+                  if (new Date(req.session.dat.quizes[i].due_date) >= new Date()){
+                    availableQuizzes = availableQuizzes.concat(req.session.dat.quizes[i]);
+                  }
+                }
+                req.session.dat.quizes = availableQuizzes;
+                res.render('quizHome', req.session.dat);
+            })
+            /*dbquiz.getQuestions((result, answers) => {
+                req.session.dat.questions = result;
+                req.session.answers = answers;
+                res.render('index', req.session.dat);
+            })*/
+        });
+    })
+    app.get('/grades', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbquiz.getQuizes((quizes) => {
                 req.session.dat.quizes = quizes;
                 res.render('quizlist', req.session.dat);
             })
