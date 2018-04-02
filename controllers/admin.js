@@ -10,14 +10,18 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/admin/createQuiz', (req, res) => {
         dbuser.login(req, (user) => {
-            res.render('quizCreate', req.session.dat);
+            dbuser.verifyAdmin(req, res, (adm) => {
+                res.render('quizCreate', req.session.dat);
+            });
         });
     });
 
     app.post('/admin/addQuiz', (req, res) => {
         dbquiz.postQuiz(req.body.name, req.body.releaseDate, req.body.dueDate, req.body.questions, (quizid) => {
-            console.log("Quiz ID", quizid);
-            res.sendStatus(200);
+            dbuser.verifyAdmin(req, res, (adm) => {
+                console.log("Quiz ID", quizid);
+                res.sendStatus(200);
+            });
         })
     });
 }
