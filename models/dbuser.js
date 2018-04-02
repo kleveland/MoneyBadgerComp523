@@ -5,11 +5,11 @@ module.exports = {
     },
 
     findUser: function (pid, cb) {
-        con.query('SELECT * FROM Users WHERE pid = ' + pid, function (err, result) {
+        con.query('SELECT * FROM users WHERE pid = ' + pid, function (err, result) {
             if (err) throw err;
             if (result[0]) {
                 console.log(result[0]);
-                con.query('SELECT is_admin FROM Groups WHERE group_id = "' + result[0].group_id + '"', function (err, result2) {
+                con.query('SELECT is_admin FROM groups WHERE group_id = "' + result[0].group_id + '"', function (err, result2) {
                     if (result2[0].is_admin == 1) {
                         result[0].is_admin = true;
                     } else {
@@ -25,7 +25,7 @@ module.exports = {
     },
 
     enterUser: function (pid, uid, cb) {
-        con.query('INSERT INTO Users (pid, onyen, first_name, last_name, group_id) ?', [[pid, uid, "defaultfirst", "defaultlast", 0]], function (err, result) {
+        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) ?', [[pid, uid, "defaultfirst", "defaultlast", 0]], function (err, result) {
             if (err) throw err;
 
         })
