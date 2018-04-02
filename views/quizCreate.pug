@@ -151,8 +151,14 @@ block content
             let posting = $.post('/admin/addQuiz', dat);
             posting.done(function(data) {
                 console.log("Success!");
+                $(".quizCreate").prepend('<div class="alert alert-success alert-dismissible fade show fixed-alert" role="alert"> <strong>Success!</strong> Your quiz was successfully created. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>')
+                questions = [];
+                drawQuestions();
+                $("#quizName").val('');
+                $("#releaseDate").val('');
+                $("#dueDate").val('');
             })
-            alert("Quiz added.")
+            //alert("Quiz added.")
         }
 
         function parseDate(date) {

@@ -15,3 +15,8 @@
 .quizCreate{
     margin: 5em;
 }
+
+.fixed-alert {
+    position: fixed;
+    margin: 1em;
+}
