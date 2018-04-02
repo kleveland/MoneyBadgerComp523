@@ -132,6 +132,8 @@ block content
             console.log("(" + dat.releaseDate + ")");
             if(dat.releaseDate == "") {
                 dat.releaseDate = new Date();
+            } else {
+            dat.releaseDate = new Date(dat.releaseDate());
             }
             dat.releaseDate = parseDate(dat.releaseDate);
             console.log("(" + dat.releaseDate + ")");
@@ -140,6 +142,8 @@ block content
             if(dat.dueDate == "") {
                 dat.dueDate = new Date();
                 dat.dueDate.setYear(dat.dueDate.getFullYear() + 1);
+            } else {
+                dat.dueDate = new Date(dat.dueDate());
             }
             dat.dueDate = parseDate(dat.dueDate);
             console.log("(" + dat.dueDate + ")");
