@@ -30,6 +30,11 @@ module.exports = function (app, dbquiz, dbuser) {
         })
     })
 
+    app.get('/logout', (req, res) => {
+        req.logout();
+        res.redirect('/Shibboleth.sso/Logout?return=https://sso.unc.edu/idp/logout.jsp')
+    })
+
     app.post('/submit/quiz', (req, res) => {
         console.log("RECIEVED ANSWER", req.body);
 
