@@ -125,14 +125,35 @@ block content
               $("#editmodal").modal('show');
           }
 
-          function addQuiz() {
-              let dat = {};
-              dat.name = $("#quizName").val();
-              dat.releaseDate = $("#releaseDate").val();
-              dat.dueDate = $("#dueDate").val();
-              dat.questions = questions;
-              let posting = $.post('/admin/addQuiz', dat);
-              posting.done(function(data) {
-                  console.log("Success!");
-              })
-          }
+        function addQuiz() {
+            let dat = {};
+            dat.name = $("#quizName").val();
+            dat.releaseDate = $("#releaseDate").val();
+            console.log("(" + dat.releaseDate + ")");
+            if(dat.releaseDate == "") {
+                dat.releaseDate = new Date();
+            }
+            dat.releaseDate = parseDate(dat.releaseDate);
+            console.log("(" + dat.releaseDate + ")");
+            dat.dueDate = $("#dueDate").val();
+            console.log("(" + dat.dueDate + ")");
+            if(dat.dueDate == "") {
+                dat.dueDate = new Date();
+                dat.dueDate.setYear(dat.dueDate.getFullYear() + 1);
+            }
+            dat.dueDate = parseDate(dat.dueDate);
+            console.log("(" + dat.dueDate + ")");
+
+            dat.questions = questions;
+            //YYYY-MM-DD HH:MM:SS
+            console.log(dat);
+            let posting = $.post('/admin/addQuiz', dat);
+            posting.done(function(data) {
+                console.log("Success!");
+            })
+            alert("Quiz added.")
+        }
+
+        function parseDate(date) {
+            return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        }
