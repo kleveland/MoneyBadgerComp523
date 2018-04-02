@@ -2,6 +2,14 @@ body {
 
 }
 
+.onyen {
+    margin-right: 1em;
+}
+
+.nav-but {
+    margin-right: 1em;
+}
+
 .anschoice {
     display: inline;
     font-size: 15px;

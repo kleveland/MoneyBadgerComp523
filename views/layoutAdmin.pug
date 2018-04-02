@@ -2,15 +2,34 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='./style/admin.css')
-    link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel='stylesheet', href='/static/style/main.css')
+    link(rel='stylesheet', href='/static/style/admin.css')
+    link(rel="stylesheet" href="/static/style/bootstrap.min.css")
+    script(src="/static/js/jquery-3.2.1.slim.min.js" crossorigin="anonymous")
+    script(src="/static/js/popper.min.js" crossorigin="anonymous")
+    script(src="/static/js/bootstrap.min.js" crossorigin="anonymous")
+    block head
+
   body
-    nav#navbar.row
-      div.container-fluid
-        a(href="/createQuiz").align-self-start.glyphicon.glyphicon-pencil.refs  Create
-        a(href="/manageStudents").align-self-start.glyphicon.glyphicon-list-alt.refs  Manage
-        a(href="/exportGrades").align-self-start.glyphicon.glyphicon-download-alt.refs  Export
-        h2.align-self-center.text-primary Admin
-        a(href="https://sso.unc.edu/idp/logout.jsp").align-self-end.btn.btn-danger.glyphicon.glyphicon-log-out.logout  Log Out
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-primary
+        a(href="#").navbar-brand Instructor Panel
+        button(type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation").navbar-toggler
+            span.navbar-toggler-icon
+        div.collapse.navbar-collapse#navbarSupportedContent
+            ul.navbar-nav.mr-auto
+                li.nav-item
+                    a(href="/admin/createQuiz").nav-link Create Quiz
+                li.nav-item
+                    a(href="/home").nav-link View Quizes
+                li.nav-item
+                    a(href="/grades").nav-link Manage Users
+            ul.navbar-nav
+                li.nav-item
+                    span.navbar-text.onyen=user.onyen
+                li.nav-item
+                    a( href="/" role="button").navbar-btn.btn.btn-success.nav-but  Student View
+                li.nav-item
+                    a(href="/logout" role="button").navbar-btn.btn.btn-danger  Log Out
     block content

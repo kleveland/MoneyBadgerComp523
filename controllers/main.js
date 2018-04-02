@@ -1,35 +1,40 @@
 module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/', (req, res) => {
-        if (req.headers.pid) {
-            dbuser.findUser(req.headers.pid, (user) => {
-                console.log("Recieved user");
-                console.log(user);
-            });
-        } else {
-            console.log("no pid header");
-        }
-        dbquiz.getQuestions((result, answers) => {
-            req.session.questions = result;
-            req.session.answers = answers;
-            console.log(req.session.questions);
-            req.session.questions.onyen = req.headers.uid;
-            req.session.questions.pid = req.headers.pid;
-            console.log(req.headers);
-            if (!req.session.questions.onyen) {
-                req.session.questions.onyen = "default";
-                req.session.questions.pid = "default pid";
-            }
-            console.log(req.session.questions.onyen);
-            res.render('index', req.session.questions);
+        dbuser.login(req, (user) => {
+            dbquiz.getQuizes((quizes) => {
+                req.session.dat.quizes = quizes;
+                res.render('quizlist', req.session.dat);
+            })
+            /*dbquiz.getQuestions((result, answers) => {
+                req.session.dat.questions = result;
+                req.session.answers = answers;
+                res.render('index', req.session.dat);
+            })*/
+        });
+    })
+
+    app.get('/404', (req, res) => {
+        res.send("404");
+    })
+
+    app.get('/quiz/:id', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbquiz.getQuiz(req.params.id, (result, answers) => {
+                req.session.dat.questions = result;
+                req.session.answers = answers;
+                console.log(req.session.dat.questions);
+                console.log(req.session.answers);
+                res.render('quizview', req.session.dat);
+            })
         })
     })
 
     app.post('/submit/quiz', (req, res) => {
         console.log("RECIEVED ANSWER", req.body);
 
-        for (let i = 0; i < req.session.questions.questlist.length; i++) {
-            if (req.session.questions.questlist[i].id == req.body.question) {
+        for (let i = 0; i < req.session.dat.questions.questlist.length; i++) {
+            if (req.session.dat.questions.questlist[i].id == req.body.question) {
                 if (!req.session.answers.questlist[i].ansresponse) {
                     req.session.answers.questlist[i].ansresponse = {
                         attempts: 0,

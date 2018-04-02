@@ -1,13 +1,21 @@
-module.exports = function (app, dbuser) {
+module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/admin', (req, res) => {
-        res.render('indexAdmin');
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                res.render('indexAdmin', req.session.dat);
+            });
+        })
     });
-    app.get('/createQuiz', (req, res) => {
-        res.render('quizCreate');
+    app.get('/admin/createQuiz', (req, res) => {
+        dbuser.login(req, (user) => {
+            res.render('quizCreate', req.session.dat);
+        });
     });
-    app.post('/editQuiz', (req, res) => {
-        res.render('quizEditor');
-        console.log("RECIEVED ANSWER", req.body);
+    app.post('/admin/addQuiz', (req, res) => {
+        dbquiz.postQuiz(req.body.name, req.body.releaseDate, req.body.dueDate, req.body.questions, (quizid) => {
+            console.log("Quiz ID", quizid);
+            res.sendStatus(200);
+        })
     });
 }

@@ -4,12 +4,13 @@ block content
     div.container-fluid
         div.row
             div.col.mx-1
-                each val, index in questlist
+                each val, index in questions.questlist
                             div.card.my-3
                                 form(name=val.id method='POST' action='/submit/quiz' id="quest" + val.id)
                                     div.card-header="Question "+(index+1)
                                     div.card-body
-                                        div(class="question")=val.question
+                                        div(class="question")
+                                            | !{val.question}
                                         ul
                                         each ans in val.answers
                                             input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)

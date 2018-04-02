@@ -11,8 +11,8 @@ app.use(bodyparser.urlencoded({ // to support URL-encoded bodies
     extended: true
 }));
 
-//app.use('/static', express.static(path.join(__dirname, 'public')))
-app.use(express.static('./public'));
+app.use('/static', express.static(path.join(__dirname, 'public')))
+//app.use(express.static('./public'));
 app.use(session({
     secret: 'testsecrettestsecrettestsecret',
     cookie: {
@@ -29,13 +29,25 @@ let config = {
     database: {
         host: "localhost",
         user: "root",
+        password: "",
+        database: "comp523",
+        port: "3306"
+    }
+};
+/*
+let config = {
+    ip: "localhost",
+    port: 3000,
+    database: {
+        host: "localhost",
+        user: "root",
         password: "root",
         database: "523",
         port: "3306"
     }
 };
 
-
+*/
 
 config.port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 config.ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
@@ -75,5 +87,5 @@ dbquiz.setCon(con);
 
 
 require('./controllers/main.js')(app, dbquiz, dbuser);
-require('./controllers/admin.js')(app, dbuser);
+require('./controllers/admin.js')(app, dbquiz, dbuser);
 //console.log(questions.questlist[0].answer);
