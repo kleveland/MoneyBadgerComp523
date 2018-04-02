@@ -42,7 +42,7 @@ module.exports = {
     login: function (req, cb) {
         if (!req.session.dat) {
             req.session.dat = {};
-            //req.headers.pid = "720466550";
+            req.headers.pid = "720466550";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;
                 cb(user);
