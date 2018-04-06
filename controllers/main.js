@@ -72,7 +72,10 @@ module.exports = function (app, dbquiz, dbuser) {
                     req.session.answers.questlist[i].ansresponse.correct = true;
                     res.send(req.session.answers.questlist[i].ansresponse)
                 } else {
-                    req.session.answers.questlist[i].ansresponse.attempts++;
+                    console.log("THIS", req.body.answer_choice);
+                    if(typeof req.body.answer_choice != "undefined"){
+                       req.session.answers.questlist[i].ansresponse.attempts++;
+                    }
                     req.session.answers.questlist[i].ansresponse.correct = false;
                     res.send(req.session.answers.questlist[i].ansresponse);
                 }
