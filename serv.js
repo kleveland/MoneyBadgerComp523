@@ -22,7 +22,7 @@ app.use(session({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-
+/*
 let config = {
     ip: "localhost",
     port: 3000,
@@ -34,9 +34,9 @@ let config = {
         port: "8889"
     }
 };
+*/
 
 
-/*
 let config = {
     ip: "localhost",
     port: 3000,
@@ -48,7 +48,7 @@ let config = {
         port: "3306"
     }
 };
-*/
+
 
 config.port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 config.ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
