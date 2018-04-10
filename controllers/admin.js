@@ -26,4 +26,36 @@ module.exports = function (app, dbquiz, dbuser) {
             })
         });
     });
+
+    app.get('/admin/users', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbuser.getUsers((users) => {
+                    console.log("Test here");
+                    console.log(req.session.dat);
+                    req.session.dat.users = users;
+                    dbuser.getOnlySections((sections) => {
+                        req.session.dat.sections = sections;
+                        res.render('manageUser', req.session.dat);
+                        req.session.dat.sections = null;
+                        req.session.dat.users = null;
+                    })
+                })
+            })
+        })
+    });
+
+    app.get('/admin/sections', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbuser.getSections((sections) => {
+                    console.log("Test here2");
+                    console.log(req.session.dat);
+                    req.session.dat.sections = sections;
+                    res.render('manageSection', req.session.dat);
+                    req.session.dat.sections = null;
+                })
+            })
+        })
+    })
 }

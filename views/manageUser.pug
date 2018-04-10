@@ -1,0 +1,33 @@
+extends layoutAdmin.pug
+
+block content
+    div.container-fluid
+      div.quizCreateHeader
+        h2.display-4.m-b-2 User List
+        div.row
+            div.col.mx-1
+                table.table.table-hover
+                    thead
+                        tr
+                            th(scope="col") #
+                            th(scope="col") Name
+                            th(scope="col") Onyen
+                            th(scope="col") PID
+                            th(scope="col") Group
+                            th(scope="col") Section
+                            th(scope="col")
+                    tbody
+                        each val, index in users
+                            tr
+                                th(scope="row")=(index+1)
+                                td=val.first_name + " " + val.last_name
+                                td=val.onyen
+                                td=val.pid
+                                td=val.type
+                                td=val.name
+                                td
+                                    div(class="dropdown")
+                                        button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
+                                        div.dropdown-menu
+                                            each val, index in sections
+                                                a(href="#" class="sec" id=val.id).dropdown-item=val.name

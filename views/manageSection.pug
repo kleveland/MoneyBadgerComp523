@@ -1,0 +1,34 @@
+extends layoutAdmin.pug
+
+block content
+    div.container-fluid
+      div.quizCreateHeader
+        h2.display-4.m-b-2 Section List
+        div.row
+            div.col.mx-1
+                div#accordion
+                    each val, index in sections
+                        div.card
+                            div(id="secHeader"+val.id).card_header
+                                h5.mb-0
+                                    button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.section_name + " - " + val.ta_name
+                            div(id="sec"+val.id aria-labelledby="sec"+val.id).collapse
+                                div.card-body
+                                    table.table.table-hover
+                                        thead
+                                            tr
+                                                th(scope="col") #
+                                                th(scope="col") Name
+                                                th(scope="col")
+                                        tbody
+                                            each val2, index2 in val.students
+                                                tr
+                                                    th(scope="row")=(index2+1)
+                                                    td=val2.name
+                                                    td
+                                                        div(class="dropdown")
+                                                            button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
+                                                            div.dropdown-menu
+                                                                each val3 in sections
+                                                                    a(href="#" class="sec" id=val3.id).dropdown-item=val3.section_name
+
