@@ -18,7 +18,7 @@ block content
                                             br
                                     div.card-footer
                                         button(type='submit').btn.btn-primary Submit Answer
-                                        h6(class="attempts") Attempts
+                                        h6(class="attempts") Attempts&nbsp;&nbsp;
                                             span.badge.badge-danger 0
                                         h4(class="score").float-right
                                             span.badge
@@ -51,8 +51,9 @@ block content
                     $("#quest"+quest+" .attempts span").html(data.attempts);
                     $("#quest"+quest+" .attempts span").removeClass("badge-danger");
                     $("#quest"+quest+" .attempts span").addClass("badge-success");
-                    $("#quest"+quest+" .score").html("Score :");
-                    $("#quest"+quest+" .score span").html(data.number_of_choices - data.attempts);
+                    $("#quest"+quest+" .score").prepend("Score");
+                    console.log(data.number_of_answers - data.attempts);
+                    $("#quest"+quest+" .score span").html(data.number_of_answers - data.attempts);
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                     $("#quest"+quest+" :input").prop("disabled", true);

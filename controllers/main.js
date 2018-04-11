@@ -41,14 +41,15 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.post('/submit/quiz', (req, res) => {
         console.log("RECIEVED ANSWER", req.body);
-
+        console.log(req.session.dat.questions);
         for (let i = 0; i < req.session.dat.questions.questlist.length; i++) {
             if (req.session.dat.questions.questlist[i].id == req.body.question) {
                 if (!req.session.answers.questlist[i].ansresponse) {
                     req.session.answers.questlist[i].ansresponse = {
                         attempts: 0,
                         correct: false,
-                        answer_id: req.body.answer_choice
+                        answer_id: req.body.answer_choice,
+                        number_of_answers: req.session.dat.questions.questlist[i].answers.length
                     }
                 }
                 req.session.answers.questlist[i].ansresponse.answer_id = req.body.answer_choice;
