@@ -7,11 +7,6 @@ module.exports = function (app, dbquiz, dbuser) {
               var availableQuizzes = [];
                 res.render('quizHome', req.session.dat);
             })
-            /*dbquiz.getQuestions((result, answers) => {
-                req.session.dat.questions = result;
-                req.session.answers = answers;
-                res.render('index', req.session.dat);
-            })*/
         });
     })
     app.get('/grades', (req, res) => {
@@ -20,11 +15,6 @@ module.exports = function (app, dbquiz, dbuser) {
                 req.session.dat.quizes = quizes;
                 res.render('quizlist', req.session.dat);
             })
-            /*dbquiz.getQuestions((result, answers) => {
-                req.session.dat.questions = result;
-                req.session.answers = answers;
-                res.render('index', req.session.dat);
-            })*/
         });
     })
 

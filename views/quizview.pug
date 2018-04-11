@@ -20,6 +20,8 @@ block content
                                         button(type='submit').btn.btn-primary Submit Answer
                                         h6(class="attempts") Attempts
                                             span.badge.badge-danger 0
+                                        h4(class="score").float-right
+                                            span.badge
         script(type='text/javascript').
                 /* attach a submit handler to all forms in the DOM */
                 $('form').submit(function(event) {
@@ -49,6 +51,7 @@ block content
                     $("#quest"+quest+" .attempts span").html(data.attempts);
                     $("#quest"+quest+" .attempts span").removeClass("badge-danger");
                     $("#quest"+quest+" .attempts span").addClass("badge-success");
+                    $("#quest"+quest+" .score").html("Score :");
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                     $("#quest"+quest+" :input").prop("disabled", true);
