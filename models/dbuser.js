@@ -7,14 +7,35 @@ module.exports = {
     getUsers: function (cb) {
         con.query('SELECT * FROM users INNER JOIN groups ON users.group_id = groups.group_id INNER JOIN user_section ON users.pid = user_section.pid INNER JOIN section ON user_section.section_id = section.id', function (err, result) {
             if (err) throw err;
+
+            console.log("Get Users:")
             console.log(result);
-            cb(result);
+            for (let i = 0; i < result.length; i++) {
+                result[i].open_quiz = [];
+            }
+            con.query('SELECT * FROM open_quiz INNER JOIN quiz ON open_quiz.quiz_id = quiz.quiz_id', function (err, result2) {
+                if (err) throw err;
+
+                console.log("Get Open Quiz:")
+                console.log(result2);
+                for (let i = 0; i < result2.length; i++) {
+                    for (let j = 0; j < result.length; j++) {
+                        if (result2[i].user_id == result[j].pid) {
+                            result[j].open_quiz.push(result2[i]);
+                            break;
+                        }
+                    }
+                }
+                console.log("Final:")
+                console.log(result);
+                cb(result);
+            })
         })
     },
 
-    getOnlySections: function(cb) {
-        con.query('SELECT * FROM section', function(err, result) {
-            if(err) throw err;
+    getOnlySections: function (cb) {
+        con.query('SELECT * FROM section', function (err, result) {
+            if (err) throw err;
             cb(result);
         })
     },
@@ -27,7 +48,7 @@ module.exports = {
             let idx = 0;
 
             for (let i = 0; i < result.length; i++) {
-                if(i==0) {
+                if (i == 0) {
                     secorg.push({
                         id: i,
                         section_name: result[i].name,
@@ -55,7 +76,7 @@ module.exports = {
                         ta_name: result[i].ta_first + " " + result[i].ta_last,
                         students: []
                     });
-                    secorg[secorg.length-1].students.push({
+                    secorg[secorg.length - 1].students.push({
                         name: result[i].first_name + " " + result[i].last_name,
                         onyen: result[i].onyen,
                         pid: result[i].pid
@@ -112,7 +133,7 @@ module.exports = {
     login: function (req, cb) {
         if (!req.session.dat) {
             req.session.dat = {};
-            //req.headers.pid = "720466550";
+            req.headers.pid = "720466550";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;
                 cb(user);
