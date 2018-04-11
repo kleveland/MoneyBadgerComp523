@@ -63,6 +63,7 @@ module.exports = function (app, dbquiz, dbuser) {
                 }
                 req.session.answers.questlist[i].ansresponse.answer_id = req.body.answer_choice;
                 if (req.session.answers.questlist[i].answer_id == req.body.answer_choice) {
+                    req.session.answers.questlist[i].ansresponse.attempts++;
                     req.session.answers.questlist[i].ansresponse.correct = true;
                     res.send(req.session.answers.questlist[i].ansresponse)
                 } else {

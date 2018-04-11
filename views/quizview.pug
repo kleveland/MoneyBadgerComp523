@@ -46,6 +46,7 @@ block content
                 if(data.correct) {
                     $("#ans"+data.answer_id + " + .anschoice").css('color','green');
                     $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
+                    $("#quest"+quest+" .attempts span").html(data.attempts);
                     $("#quest"+quest+" .attempts span").removeClass("badge-danger");
                     $("#quest"+quest+" .attempts span").addClass("badge-success");
                     $('input[type=radio]#ans'+data.answer_id).remove();
@@ -58,10 +59,6 @@ block content
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                 }
-                /*
-                code that will alter the question to show correct/incorrect,
-                and number of attempts will go here
-                */
 
                 });
                 });
