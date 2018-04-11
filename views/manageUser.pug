@@ -6,14 +6,19 @@ block content
         h2.display-4.m-b-2 User List
         div.row
             div.col.mx-1
-                table.table.table-hover
+                table.table.table-hover.tablesorter#userTable
                     thead
                         tr
                             th(scope="col") #
+                              i.glyphicon.glyphicon-chevron-down
                             th(scope="col") Name
+                              i.glyphicon.glyphicon-chevron-down
                             th(scope="col") Onyen
+                              i.glyphicon.glyphicon-chevron-down
                             th(scope="col") PID
+                              i.glyphicon.glyphicon-chevron-down
                             th(scope="col") Group
+                              i.glyphicon.glyphicon-chevron-down
                             th(scope="col") Section
                             th(scope="col") Change Section
                             th(scope="col") Closed Quizes
@@ -43,13 +48,14 @@ block content
                                                     let setVal = $(this).text();
                                                     let changeVal = $(this).parent().parent().parent().siblings("#secName");
                                                     console.log(dat);
+                                                    console.log(changeVal);
                                                     $.post("/admin/updateSec", dat).done(function(val) {
                                                         console.log("Posting done.");
                                                         changeVal.html(setVal);
+                                                        $("#userTable").trigger("updateCell",[changeVal[0], true, () => {
+                                                            console.log("updated cell.");
+                                                        }]);
                                                     });
-
-
-
                                                 })
                                 - let quiz_arr = val.closed_quiz
                                 td
@@ -71,49 +77,10 @@ block content
                                                     a(href="#" class="closequiz" id=val.quiz_id).dropdown-item="Close '" + val.quiz_name + "'"
                                             else
                                                 a(href="#" class="sec").dropdown-item No Open Quizes
-    script(type='text/javascript').
 
-                /* attach a submit handler to all forms in the DOM */
-                $('form').submit(function(event) {
-                /* stop form from submitting default way (which reloads the whole page)*/
-                event.preventDefault();
-                /* get the action attribute from the <form action=""> element -> contains URL to handler*/
-                var $form = $(this),
-                url = $form.attr('action');
-                /* get the question and answer choice selected */
-                quest = $form.attr('name');
-                answer = $('#quest' + quest + ' input:checked').val();
-                //questid = $form.attr('id');
-                /* printing variables before post call is made */
-                console.log(event);
-                console.log(quest);
-                console.log(answer);
-                //console.log(questid);
-                /* Send the data using post */
-                var posting = $.post( url, { question: quest, answer_choice: answer } );
-                /* Alerts the results */
-                posting.done(function( data ) {
-                //alert('success');
-                console.log(data);
-                if(data.correct) {
-                    $("#ans"+data.answer_id + " + .anschoice").css('color','green');
-                    $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
-                    $("#quest"+quest+" .attempts span").removeClass("badge-danger");
-                    $("#quest"+quest+" .attempts span").addClass("badge-success");
-                    $('input[type=radio]#ans'+data.answer_id).remove();
-
-                    $("#quest"+quest+" :input").prop("disabled", true);
-                } else {
-                    $("#ans"+data.answer_id + " + .anschoice").css('color','red');
-                    $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
-                    $("#quest"+quest+" .attempts span").html(data.attempts);
-                    $('input[type=radio]#ans'+data.answer_id).remove();
-
+            script(type='text/javascript').
+              $(document).ready(function()
+                {
+                $("#userTable").tablesorter( {sortList: [[0,0], [1,0]]} );
                 }
-                /*
-                code that will alter the question to show correct/incorrect,
-                and number of attempts will go here
-                */
-
-                });
-                });
+              );
