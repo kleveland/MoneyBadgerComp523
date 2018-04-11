@@ -81,6 +81,7 @@ let serv = app.listen(config.port, config.ip, () => console.log('Example app lis
 const dbquiz = require('./models/dbquiz.js'),
       dbuser = require('./models/dbuser.js');
 dbuser.setCon(con);
+dbuser.setDbQuiz(dbquiz);
 dbquiz.setCon(con);
 
 

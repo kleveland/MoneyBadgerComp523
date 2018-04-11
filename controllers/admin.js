@@ -57,5 +57,17 @@ module.exports = function (app, dbquiz, dbuser) {
                 })
             })
         })
+    });
+
+    app.post('/admin/updateSec', (req,res) => {
+
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbuser.updateSection(req.body.pid, req.body.section, (dat) => {
+                    console.log("Quiz ID", dat);
+                    res.sendStatus(200);
+                })
+            });
+        });
     })
 }

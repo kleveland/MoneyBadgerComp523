@@ -15,7 +15,9 @@ block content
                             th(scope="col") PID
                             th(scope="col") Group
                             th(scope="col") Section
-                            th(scope="col")
+                            th(scope="col") Change Section
+                            th(scope="col") Closed Quizes
+                            th(scope="col") Open Quizes
                     tbody
                         each val, index in users
                             tr
@@ -24,10 +26,94 @@ block content
                                 td=val.onyen
                                 td=val.pid
                                 td=val.type
-                                td=val.name
+                                td(id="secName")=val.name
                                 td
-                                    div(class="dropdown")
+                                    div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
-                                        div.dropdown-menu
+                                        div.dropdown-menu(id=val.pid)
                                             each val, index in sections
                                                 a(href="#" class="sec" id=val.id).dropdown-item=val.name
+                                            script(type='text/javascript').
+                                                $(".sec").unbind().click(function() {
+                                                    console.log("section clicked");
+                                                    let dat = {
+                                                        pid: $(this).parent().attr("id"),
+                                                        section: $(this).attr("id")
+                                                    }
+                                                    let setVal = $(this).text();
+                                                    let changeVal = $(this).parent().parent().parent().siblings("#secName");
+                                                    console.log(dat);
+                                                    $.post("/admin/updateSec", dat).done(function(val) {
+                                                        console.log("Posting done.");
+                                                        changeVal.html(setVal);
+                                                    });
+
+
+
+                                                })
+                                - let quiz_arr = val.closed_quiz
+                                td
+                                    div.dropdown
+                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
+                                        div.dropdown-menu
+                                            if quiz_arr.length >= 1
+                                                each val, index in quiz_arr
+                                                    a(href="#" class="openquiz" id=val.quiz_id).dropdown-item="Open '" + val.quiz_name + "'"
+                                            else
+                                                a(href="#" class="sec").dropdown-item No Closed Quizes
+                                - quiz_arr = val.open_quiz
+                                td
+                                    div.dropdown
+                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
+                                        div.dropdown-menu
+                                            if quiz_arr.length >= 1
+                                                each val, index in quiz_arr
+                                                    a(href="#" class="closequiz" id=val.quiz_id).dropdown-item="Close '" + val.quiz_name + "'"
+                                            else
+                                                a(href="#" class="sec").dropdown-item No Open Quizes
+    script(type='text/javascript').
+
+                /* attach a submit handler to all forms in the DOM */
+                $('form').submit(function(event) {
+                /* stop form from submitting default way (which reloads the whole page)*/
+                event.preventDefault();
+                /* get the action attribute from the <form action=""> element -> contains URL to handler*/
+                var $form = $(this),
+                url = $form.attr('action');
+                /* get the question and answer choice selected */
+                quest = $form.attr('name');
+                answer = $('#quest' + quest + ' input:checked').val();
+                //questid = $form.attr('id');
+                /* printing variables before post call is made */
+                console.log(event);
+                console.log(quest);
+                console.log(answer);
+                //console.log(questid);
+                /* Send the data using post */
+                var posting = $.post( url, { question: quest, answer_choice: answer } );
+                /* Alerts the results */
+                posting.done(function( data ) {
+                //alert('success');
+                console.log(data);
+                if(data.correct) {
+                    $("#ans"+data.answer_id + " + .anschoice").css('color','green');
+                    $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
+                    $("#quest"+quest+" .attempts span").removeClass("badge-danger");
+                    $("#quest"+quest+" .attempts span").addClass("badge-success");
+                    $('input[type=radio]#ans'+data.answer_id).remove();
+
+                    $("#quest"+quest+" :input").prop("disabled", true);
+                } else {
+                    $("#ans"+data.answer_id + " + .anschoice").css('color','red');
+                    $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
+                    $("#quest"+quest+" .attempts span").html(data.attempts);
+                    $('input[type=radio]#ans'+data.answer_id).remove();
+
+                }
+                /*
+                code that will alter the question to show correct/incorrect,
+                and number of attempts will go here
+                */
+
+                });
+                });

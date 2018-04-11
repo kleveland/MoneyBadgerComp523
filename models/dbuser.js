@@ -1,7 +1,13 @@
 let con = null;
+let dbquiz = null;
+
 module.exports = {
     setCon: function (conn) {
         con = conn;
+    },
+
+    setDbQuiz: function (quiz) {
+        dbquiz = quiz;
     },
 
     getUsers: function (cb) {
@@ -12,23 +18,37 @@ module.exports = {
             console.log(result);
             for (let i = 0; i < result.length; i++) {
                 result[i].open_quiz = [];
+                result[i].closed_quiz = [];
             }
             con.query('SELECT * FROM open_quiz INNER JOIN quiz ON open_quiz.quiz_id = quiz.quiz_id', function (err, result2) {
                 if (err) throw err;
-
                 console.log("Get Open Quiz:")
                 console.log(result2);
-                for (let i = 0; i < result2.length; i++) {
-                    for (let j = 0; j < result.length; j++) {
-                        if (result2[i].user_id == result[j].pid) {
-                            result[j].open_quiz.push(result2[i]);
-                            break;
+                dbquiz.getQuizes((quizes) => {
+                    for (let i = 0; i < result2.length; i++) {
+                        for (let j = 0; j < result.length; j++) {
+                            if (result2[i].user_id == result[j].pid) {
+                                result[j].open_quiz.push(result2[i]);
+                                break;
+                            }
                         }
                     }
-                }
-                console.log("Final:")
-                console.log(result);
-                cb(result);
+                    for (let i = 0; i < result.length; i++) {
+                        for (let j = 0; j < result[i].open_quiz.length; j++) {
+                            for (let k = 0; k < quizes.length; k++) {
+                                if (result[i].open_quiz[j].quiz_id != quizes[k].quiz_id) {
+                                    result[i].closed_quiz.push(quizes[k]);
+                                }
+                            }
+                        }
+                        if(result[i].open_quiz.length == 0) {
+                            result[i].closed_quiz = quizes;
+                        }
+                    }
+                    console.log("Final:")
+                    console.log(result);
+                    cb(result);
+                });
             })
         })
     },
@@ -113,6 +133,12 @@ module.exports = {
                 cb(-1);
             }
         });
+    },
+
+    updateSection: function(pid, section, cb) {
+        con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function(err, result) {
+            cb("OK");
+        })
     },
 
     enterUser: function (pid, uid, cb) {
