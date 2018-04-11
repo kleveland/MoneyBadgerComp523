@@ -5,12 +5,6 @@ module.exports = function (app, dbquiz, dbuser) {
             dbquiz.getQuizes((quizes) => {
               req.session.dat.quizes = quizes;
               var availableQuizzes = [];
-                for (i = 0; i < req.session.dat.quizes.length; i++) {
-                  if (new Date(req.session.dat.quizes[i].due_date) >= new Date()){
-                    availableQuizzes = availableQuizzes.concat(req.session.dat.quizes[i]);
-                  }
-                }
-                req.session.dat.quizes = availableQuizzes;
                 res.render('quizHome', req.session.dat);
             })
             /*dbquiz.getQuestions((result, answers) => {

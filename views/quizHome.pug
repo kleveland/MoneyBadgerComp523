@@ -11,15 +11,11 @@ block content
                         tr
                             th(scope="col") #
                             th(scope="col") Name
-                            th(scope="col") Open Date
-                            th(scope="col") Due Date
                             th(scope="col")
                     tbody
                         each val, index in quizes
                             tr
                                 th(scope="row")=(index+1)
                                 td=val.quiz_name
-                                td=new Date(val.start_date)
-                                td=new Date(val.due_date)
                                 td
                                     a(href="/quiz/"+val.quiz_id) View Quiz

@@ -67,11 +67,11 @@ module.exports = {
         });
     },
 
-    postQuiz: function (name, startdate, duedate, questions, cb) {
+    postQuiz: function (name, questions, cb) {
         let quizdat = [
-            [name, startdate, duedate]
+            [name]
         ]
-        con.query("INSERT INTO quiz (quiz_name, start_date, due_date) VALUES ?", [quizdat], function (err, result, fields) {
+        con.query("INSERT INTO quiz (quiz_name) VALUES ?", [quizdat], function (err, result, fields) {
             console.log("111");
             if (err) throw err;
             let quizId = result.insertId;
