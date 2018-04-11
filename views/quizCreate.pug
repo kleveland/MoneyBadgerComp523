@@ -24,8 +24,9 @@ block content
           input#quizName.form-control(type='text' name='quizName')
       div.question-list
       button(type="button" onclick="addQuestion()").btn.btn-primary Add Question
-      button.btn.btn-primary.btn-success.float-right(type='submit' onClick="addQuiz()") Publish Quiz
+      button.btn.btn-primary.btn-success.float-right(type='submit' onClick="addQuiz()" id="publish") Publish Quiz
       script.
+          $("#publish").prop("disabled", true);  
           let questions = [];
 
           $(document).on("click","#choice-delete", function() {
@@ -38,11 +39,14 @@ block content
               $(".modal-body").html("<div id='editor'></div>")
               $("#editor").trumbowyg();
               $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
+              $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
               $("#addchoice").on("click", function() {
                   $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
+                  //$("#savebut").prop("disabled", false);
               })
               $("#closebut").html("Cancel");
               $("#savebut").html("Add Question");
+              //$("#savebut").prop("disabled", true);
               $(document).on("click","#savebut",function() {
                   let answers = [];
                   $(".choice-entry").each(function(index, el) {
@@ -57,6 +61,7 @@ block content
                   drawQuestions();
                   $(document).off("click","#savebut");
                   $("#editmodal").modal('hide');
+                  $("#publish").prop("disabled", false);
               })
               $("#editmodal").modal('show');
           }
@@ -81,6 +86,10 @@ block content
           function deleteQuestion(id) {
               questions.splice(id, 1);
               drawQuestions();
+              console.log(questions.length);
+              if(questions.length == 0) {
+                $("#publish").prop("disabled", true);
+              }
           }
 
           function editQuestion(id) {
