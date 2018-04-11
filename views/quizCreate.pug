@@ -10,11 +10,11 @@ block content
             div.modal-content
                 div.modal-header
                     h5.modal-title#exampleModalLabel Modal title
-                    button(type="button" data-dismiss="modal" aria-label="Close").close
+                    button(type="button" class="closebut" data-dismiss="modal" aria-label="Close").close
                         span(aria-hidden="true") &times;
                 div.modal-body Testbody
                 div.modal-footer
-                    button(type="button" id="closebut" data-dismiss="modal").btn.btn-secondary Close
+                    button(type="button" class="closebut" data-dismiss="modal").btn.btn-secondary Cancel
                     button(type="button" id="savebut" ).btn.btn-primary Save Changes
     div.quizCreate
       div.quizCreateHeader
@@ -35,6 +35,7 @@ block content
           })
 
           function addQuestion() {
+              $("#editmodal").modal({backdrop: "static", keyboard: false});
               $(".modal-title").html("Add Question");
               $(".modal-body").html("<div id='editor'></div>")
               $("#editor").trumbowyg();
@@ -44,10 +45,11 @@ block content
                   $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
                   //$("#savebut").prop("disabled", false);
               })
-              $("#closebut").html("Cancel");
+              //$(".closebut").html("Cancel");
               $("#savebut").html("Add Question");
               //$("#savebut").prop("disabled", true);
               $(document).on("click","#savebut",function() {
+                  console.log("HAI");
                   let answers = [];
                   $(".choice-entry").each(function(index, el) {
                       answers.push({text: $(this).val(), correct: false });
@@ -64,6 +66,9 @@ block content
                   $("#publish").prop("disabled", false);
               })
               $("#editmodal").modal('show');
+              $(document).on("click",".closebut",function() {
+                 $(document).off("click","#savebut");
+              })
           }
 
           function drawQuestions() {
