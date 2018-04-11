@@ -43,27 +43,35 @@ block content
               $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
               $("#addchoice").on("click", function() {
                   $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span></div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
-                  //$("#savebut").prop("disabled", false);
               })
               //$(".closebut").html("Cancel");
               $("#savebut").html("Add Question");
               //$("#savebut").prop("disabled", true);
               $(document).on("click","#savebut",function() {
-                  console.log("HAI");
                   let answers = [];
-                  $(".choice-entry").each(function(index, el) {
-                      answers.push({text: $(this).val(), correct: false });
-                  })
+                  let checked = false;
                   $(".anscorrect").each(function(index, el) {
-                      answers[index].correct = $(this).prop("checked");
+                      if($(this).prop("checked")){
+                         checked = true;
+                      }
                   })
-                  console.log($("#editor").trumbowyg("html"));
-                  console.log(answers);
-                  questions.push({question_html: $("#editor").trumbowyg("html"), answers: answers });
-                  drawQuestions();
-                  $(document).off("click","#savebut");
-                  $("#editmodal").modal('hide');
-                  $("#publish").prop("disabled", false);
+                  if(checked){
+                      $(".choice-entry").each(function(index, el) {
+                          answers.push({text: $(this).val(), correct: false });
+                      })
+                      $(".anscorrect").each(function(index, el) {
+                          answers[index].correct = $(this).prop("checked");
+                      })
+                      console.log($("#editor").trumbowyg("html"));
+                      console.log(answers);
+                      questions.push({question_html: $("#editor").trumbowyg("html"), answers: answers });
+                      drawQuestions();
+                      $(document).off("click","#savebut");
+                      $("#editmodal").modal('hide');
+                      $("#publish").prop("disabled", false);
+                 }else{
+                      alert("Please select a correct answer.");
+                 }
               })
               $("#editmodal").modal('show');
               $(document).on("click",".closebut",function() {
