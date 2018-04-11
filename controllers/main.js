@@ -47,7 +47,7 @@ module.exports = function (app, dbquiz, dbuser) {
                 if (!req.session.answers.questlist[i].ansresponse) {
                     req.session.answers.questlist[i].ansresponse = {
                         attempts: 0,
-                        correct: true,
+                        correct: false,
                         answer_id: req.body.answer_choice
                     }
                 }

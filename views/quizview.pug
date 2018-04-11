@@ -52,6 +52,7 @@ block content
                     $("#quest"+quest+" .attempts span").removeClass("badge-danger");
                     $("#quest"+quest+" .attempts span").addClass("badge-success");
                     $("#quest"+quest+" .score").html("Score :");
+                    $("#quest"+quest+" .score span").html(data.number_of_choices - data.attempts);
                     $('input[type=radio]#ans'+data.answer_id).remove();
 
                     $("#quest"+quest+" :input").prop("disabled", true);

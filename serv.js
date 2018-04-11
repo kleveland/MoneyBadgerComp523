@@ -33,7 +33,9 @@ let config = {
         database: "comp523",
         port: "8889"
     }
-};*/
+};
+*/
+
 
 let config = {
     ip: "localhost",
