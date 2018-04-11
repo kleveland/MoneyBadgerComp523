@@ -33,9 +33,7 @@ let config = {
         database: "comp523",
         port: "8889"
     }
-};
-*/
-
+};*/
 
 let config = {
     ip: "localhost",
@@ -48,7 +46,6 @@ let config = {
         port: "3306"
     }
 };
-
 
 config.port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 config.ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';

@@ -22,12 +22,6 @@ block content
       div.form-group
           label(for='quizName') Quiz Name:
           input#quizName.form-control(type='text' name='quizName')
-      div.form-group
-          label(for='releaseDate') Release Date and Time:
-          input#releaseDate.form-control(type='datetime-local' name='releaseDate')
-      div.form-group
-          label(for='dueDate') Due Date and Time:
-          input#dueDate.form-control(type='datetime-local' name='dueDate')
       div.question-list
       button(type="button" onclick="addQuestion()").btn.btn-primary Add Question
       button.btn.btn-primary.btn-success.float-right(type='submit' onClick="addQuiz()") Publish Quiz
@@ -128,28 +122,8 @@ block content
         function addQuiz() {
             let dat = {};
             dat.name = $("#quizName").val();
-            dat.releaseDate = $("#releaseDate").val();
-            console.log("(" + dat.releaseDate + ")");
-            if(dat.releaseDate == "") {
-                dat.releaseDate = new Date();
-            } else {
-                dat.releaseDate = new Date(dat.releaseDate);
-            }
-            dat.releaseDate = parseDate(dat.releaseDate);
-            console.log("(" + dat.releaseDate + ")");
-            dat.dueDate = $("#dueDate").val();
-            console.log("(" + dat.dueDate + ")");
-            if(dat.dueDate == "") {
-                dat.dueDate = new Date();
-                dat.dueDate.setYear(dat.dueDate.getFullYear() + 1);
-            } else {
-                dat.dueDate = new Date(dat.dueDate);
-            }
-            dat.dueDate = parseDate(dat.dueDate);
-            console.log("(" + dat.dueDate + ")");
 
             dat.questions = questions;
-            //YYYY-MM-DD HH:MM:SS
             console.log(dat);
             let posting = $.post('/admin/addQuiz', dat);
             posting.done(function(data) {
@@ -158,16 +132,6 @@ block content
                 questions = [];
                 drawQuestions();
                 $("#quizName").val('');
-                $("#releaseDate").val('');
-                $("#dueDate").val('');
             })
             //alert("Quiz added.")
-        }
-
-        function parseDate(date) {
-            let day = date.getDay();
-            if(day == 0) {
-                day = 1;
-            }
-            return date.getFullYear() + "-" + date.getMonth() + "-" + day + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         }
