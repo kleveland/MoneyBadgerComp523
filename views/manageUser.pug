@@ -29,7 +29,7 @@ block content
                                 th(scope="row")=(index+1)
                                 td=val.first_name + " " + val.last_name
                                 td=val.onyen
-                                td=val.pid
+                                td(id="pid")=val.pid
                                 td=val.type
                                 td(id="secName")=val.name
                                 td
@@ -61,26 +61,51 @@ block content
                                 td
                                     div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
-                                        div.dropdown-menu
+                                        div.dropdown-menu.open_quiz_but
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
-                                                    a(href="#" class="openquiz" id=val.quiz_id).dropdown-item="Open '" + val.quiz_name + "'"
+                                                    a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                             else
-                                                a(href="#" class="sec").dropdown-item No Closed Quizes
+                                                a(href="#").dropdown-item No Closed Quizes
                                 - quiz_arr = val.open_quiz
                                 td
                                     div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
-                                        div.dropdown-menu
+                                        div.dropdown-menu.close_quiz_but
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
-                                                    a(href="#" class="closequiz" id=val.quiz_id).dropdown-item="Close '" + val.quiz_name + "'"
+                                                    a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                             else
-                                                a(href="#" class="sec").dropdown-item No Open Quizes
+                                                a(href="#").dropdown-item No Open Quizes
 
             script(type='text/javascript').
-              $(document).ready(function()
-                {
-                $("#userTable").tablesorter( {sortList: [[0,0], [1,0]]} );
-                }
-              );
+                $(document).ready(function() {
+                    $("#userTable").tablesorter( {sortList: [[0,0], [1,0]]} );
+                    $(document).on("click", ".openquiz", function() {
+                        console.log("Open quiz", $(this).attr("id"));
+                        let el = $(this);
+                        console.log($(this).parent().parent().parent().siblings("#pid").html());
+                        $.post("/admin/openquiz", {
+                            user: $(this).parent().parent().parent().siblings("#pid").html(),
+                            quiz_id: $(this).attr("id")
+                        }).done(function() {
+                            console.log("Success Open");
+                            el.removeClass("openquiz");
+                            el.addClass("closequiz");
+                            el.prependTo(".close_quiz_but");
+                        });
+                    })
+                    $(document).on("click", ".closequiz", function() {
+                        console.log("Close quiz", $(this).attr("id"));
+                        let el = $(this);
+                        $.post("/admin/closequiz", {
+                            user: $(this).parent().parent().parent().siblings("#pid").html(),
+                            quiz_id: $(this).attr("id")
+                        }).done(function() {
+                            console.log("Success Close");
+                            el.removeClass("closequiz");
+                            el.addClass("openquiz");
+                            el.prependTo(".open_quiz_but");
+                        });
+                    })
+                });

@@ -2,9 +2,10 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/', (req, res) => {
         dbuser.login(req, (user) => {
-            dbquiz.getQuizes((quizes) => {
-              req.session.dat.quizes = quizes;
-              var availableQuizzes = [];
+            console.log("USER", user);
+            dbquiz.getOpenQuizes(req.session.dat.user.pid, (quizes) => {
+                req.session.dat.quizes = quizes;
+                var availableQuizzes = [];
                 res.render('quizHome', req.session.dat);
             })
         });
@@ -24,12 +25,19 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/quiz/:id', (req, res) => {
         dbuser.login(req, (user) => {
-            dbquiz.getQuiz(req.params.id, (result, answers) => {
-                req.session.dat.questions = result;
-                req.session.answers = answers;
-                console.log(req.session.dat.questions);
-                console.log(req.session.answers);
-                res.render('quizview', req.session.dat);
+            dbquiz.verifyQuizAccess(req.params.id, user.pid, (access) => {
+                if (access) {
+                    dbquiz.getQuiz(req.params.id, (result, answers) => {
+                        req.session.dat.questions = result;
+                        req.session.answers = answers;
+                        console.log("DAT", req.session.dat);
+                        console.log("QUESTIONS", req.session.dat.questions);
+                        console.log(req.session.answers);
+                        res.render('quizview', req.session.dat);
+                    })
+                } else {
+                    res.redirect("/404");
+                }
             })
         })
     })
@@ -40,33 +48,42 @@ module.exports = function (app, dbquiz, dbuser) {
     })
 
     app.post('/submit/quiz', (req, res) => {
-        console.log("RECIEVED ANSWER", req.body);
-        console.log(req.session.dat.questions);
-        for (let i = 0; i < req.session.dat.questions.questlist.length; i++) {
-            if (req.session.dat.questions.questlist[i].id == req.body.question) {
-                if (!req.session.answers.questlist[i].ansresponse) {
-                    req.session.answers.questlist[i].ansresponse = {
-                        attempts: 0,
-                        correct: false,
-                        answer_id: req.body.answer_choice,
-                        number_of_answers: req.session.dat.questions.questlist[i].answers.length
+        dbuser.login(req, (user) => {
+            dbquiz.verifyQuizAccess(req.session.dat.questions.quiz_id, user.pid, (access) => {
+                if (access) {
+                    console.log("RECIEVED ANSWER", req.body);
+                    console.log(req.session.dat.questions);
+                    for (let i = 0; i < req.session.dat.questions.questlist.length; i++) {
+                        if (req.session.dat.questions.questlist[i].id == req.body.question) {
+                            if (!req.session.answers.questlist[i].ansresponse) {
+                                req.session.answers.questlist[i].ansresponse = {
+                                    attempts: 0,
+                                    correct: false,
+                                    answer_id: req.body.answer_choice,
+                                    number_of_answers: req.session.dat.questions.questlist[i].answers.length
+                                }
+                            }
+                            req.session.answers.questlist[i].ansresponse.answer_id = req.body.answer_choice;
+                            if (req.session.answers.questlist[i].answer_id == req.body.answer_choice) {
+                                req.session.answers.questlist[i].ansresponse.attempts++;
+                                req.session.answers.questlist[i].ansresponse.correct = true;
+                                res.send(req.session.answers.questlist[i].ansresponse)
+                            } else {
+                                console.log("THIS", req.body.answer_choice);
+                                if (typeof req.body.answer_choice != "undefined") {
+                                    req.session.answers.questlist[i].ansresponse.attempts++;
+                                }
+                                req.session.answers.questlist[i].ansresponse.correct = false;
+                                res.send(req.session.answers.questlist[i].ansresponse);
+                            }
+                        }
                     }
-                }
-                req.session.answers.questlist[i].ansresponse.answer_id = req.body.answer_choice;
-                if (req.session.answers.questlist[i].answer_id == req.body.answer_choice) {
-                    req.session.answers.questlist[i].ansresponse.attempts++;
-                    req.session.answers.questlist[i].ansresponse.correct = true;
-                    res.send(req.session.answers.questlist[i].ansresponse)
                 } else {
-                    console.log("THIS", req.body.answer_choice);
-                    if(typeof req.body.answer_choice != "undefined"){
-                       req.session.answers.questlist[i].ansresponse.attempts++;
-                    }
-                    req.session.answers.questlist[i].ansresponse.correct = false;
-                    res.send(req.session.answers.questlist[i].ansresponse);
+                    console.log("Temp. fail to post");
                 }
-            }
-        }
+            });
+
+        })
 
     })
 

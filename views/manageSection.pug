@@ -28,7 +28,23 @@ block content
                                                     td
                                                         div(class="dropdown")
                                                             button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
-                                                            div.dropdown-menu
+                                                            div(id=val2.pid).dropdown-menu
                                                                 each val3 in sections
                                                                     a(href="#" class="sec" id=val3.id).dropdown-item=val3.section_name
+                                                            script(type='text/javascript').
+                                                                $(".sec").unbind().click(function() {
+                                                                    console.log("section clicked");
+                                                                    let dat = {
+                                                                        pid: $(this).parent().attr("id"),
+                                                                        section: $(this).attr("id")
+                                                                    }
+                                                                    let el = $(this).parent().parent().parent().parent();
+                                                                    let elAppend = $("#sec" + dat.section + " tbody");
+                                                                    console.log(elAppend);
+                                                                    console.log(dat);
+                                                                    $.post("/admin/updateSec", dat).done(function(val) {
+                                                                        console.log("Posting done.");
+                                                                        el.prependTo(elAppend);
+                                                                    });
+                                                                })
 

@@ -50,8 +50,8 @@ module.exports = function (app, dbquiz, dbuser) {
             dbuser.verifyAdmin(req, res, (adm) => {
                 dbuser.getSections((sections) => {
                     console.log("Test here2");
-                    console.log(req.session.dat);
                     req.session.dat.sections = sections;
+                    console.log(req.session.dat);
                     res.render('manageSection', req.session.dat);
                     req.session.dat.sections = null;
                 })
@@ -59,12 +59,32 @@ module.exports = function (app, dbquiz, dbuser) {
         })
     });
 
-    app.post('/admin/updateSec', (req,res) => {
+    app.post('/admin/updateSec', (req, res) => {
 
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
                 dbuser.updateSection(req.body.pid, req.body.section, (dat) => {
                     console.log("Quiz ID", dat);
+                    res.sendStatus(200);
+                })
+            });
+        });
+    });
+
+    app.post("/admin/openquiz", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbquiz.openQuiz(req.body.user, req.body.quiz_id, () => {
+                    res.sendStatus(200);
+                })
+            });
+        });
+    })
+
+    app.post("/admin/closequiz", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbquiz.closeQuiz(req.body.user, req.body.quiz_id, () => {
                     res.sendStatus(200);
                 })
             });

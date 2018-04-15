@@ -40,7 +40,7 @@ block content
                 console.log(answer);
                 //console.log(questid);
                 /* Send the data using post */
-                var posting = $.post( url, { question: quest, answer_choice: answer } );
+                var posting = $.post( url, { quiz: "#{questions.quiz_id}", question: quest, answer_choice: answer } );
                 /* Alerts the results */
                 posting.done(function( data ) {
                 //alert('success');

@@ -59,10 +59,12 @@ module.exports = {
             cb(result);
         })
     },
+
     getSections: function (cb) {
-        con.query('SELECT t1.first_name, t1.last_name, t1.onyen, t1.pid, t1.name, t2.first_name AS ta_first, t2.last_name AS ta_last, t2.pid AS ta_pid  FROM (SELECT first_name, last_name, onyen, users.pid, name, ta_id FROM section INNER JOIN user_section ON section.id = user_section.section_id INNER JOIN ta_section ON section.id = ta_section.section_id INNER JOIN users ON users.pid = user_section.pid) AS t1 INNER JOIN users t2 ON t1.ta_id = t2.pid', function (err, result) {
+        con.query('SELECT t1.id, t1.first_name, t1.last_name, t1.onyen, t1.pid, t1.name, t2.first_name AS ta_first, t2.last_name AS ta_last, t2.pid AS ta_pid  FROM (SELECT id, first_name, last_name, onyen, users.pid, name, ta_id FROM section INNER JOIN user_section ON section.id = user_section.section_id INNER JOIN ta_section ON section.id = ta_section.section_id INNER JOIN users ON users.pid = user_section.pid) AS t1 INNER JOIN users t2 ON t1.ta_id = t2.pid', function (err, result) {
             if (err) throw err;
             console.log("test3-----------------");
+            console.log(result[0]);
             let secorg = [];
             let appendnew = false;
             let idx = 0;
@@ -70,7 +72,7 @@ module.exports = {
             for (let i = 0; i < result.length; i++) {
                 if (i == 0) {
                     secorg.push({
-                        id: i,
+                        id: result[i].id,
                         section_name: result[i].name,
                         ta_pid: result[i].ta_pid,
                         ta_name: result[i].ta_first + " " + result[i].ta_last,
@@ -90,7 +92,7 @@ module.exports = {
                 }
                 if (appendnew) {
                     secorg.push({
-                        id: i,
+                        id: result[i].id,
                         section_name: result[i].name,
                         ta_pid: result[i].ta_pid,
                         ta_name: result[i].ta_first + " " + result[i].ta_last,

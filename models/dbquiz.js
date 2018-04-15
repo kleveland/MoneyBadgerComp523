@@ -1,4 +1,5 @@
 let con = null;
+
 module.exports = {
 
     setCon(conn) {
@@ -11,11 +12,29 @@ module.exports = {
         })
     },
 
+    getOpenQuizes: function (user, cb) {
+        con.query("SELECT * FROM quiz INNER JOIN open_quiz ON quiz.quiz_id = open_quiz.quiz_id WHERE user_id = " + user, function (err, result) {
+            if (err) throw err;
+            cb(result);
+        });
+    },
+
+    verifyQuizAccess: function (quizid, pid, cb) {
+        con.query("SELECT * FROM open_quiz WHERE quiz_id = " + quizid + " AND user_id = " + pid, function (err, result, fields) {
+            if (err) throw err;
+            if (result.length > 0) {
+                cb(true);
+            } else {
+                cb(false);
+            }
+        })
+    },
+
     getQuiz: function (quizid, cb) {
         con.query("SELECT * FROM quiz INNER JOIN questions ON quiz.quiz_id = questions.quiz_id INNER JOIN answers ON questions.question_id = answers.question_id WHERE questions.quiz_id = " + quizid, function (err, result, fields) {
             if (err) throw err;
             let questions = result;
-            console.log("QUESTIONS")
+            console.log("QUESTIONS");
             console.log(questions);
             //console.log(questions)
             result = {
@@ -23,6 +42,10 @@ module.exports = {
             }
             let answers = {
                 questlist: []
+            }
+            if (questions.length >= 1) {
+                result.quiz_id = questions[0].quiz_id;
+                answers.quiz_id = questions[0].quiz_id;
             }
 
             i = 0;
@@ -98,6 +121,24 @@ module.exports = {
                     cb(quizId);
                 })
             })
+        })
+    },
+
+    openQuiz: function (pid, quiz, cb) {
+        let vals = [];
+        vals.push([pid,quiz]);
+        con.query("INSERT INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
+            if (err) throw err;
+            console.log("Opened Quiz!");
+            cb();
+        })
+    },
+
+    closeQuiz: function (pid, quiz, cb) {
+        con.query("DELETE FROM open_quiz WHERE user_id = " + pid + " AND quiz_id = " + quiz, function (err, result, fields) {
+            if (err) throw err;
+            console.log("Closed Quiz!");
+            cb();
         })
     }
 }
