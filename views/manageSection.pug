@@ -13,13 +13,13 @@ block content
                                 h5.mb-0.sec-accordion
                                     button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name
                                     div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
                                         div.dropdown-menu
                                             h6.dropdown-header Click to Close Quiz
                                             each val, index in quizes
                                                 a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                     div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
                                         div.dropdown-menu
                                             h6.dropdown-header Click to Open Quiz
                                             each val, index in quizes

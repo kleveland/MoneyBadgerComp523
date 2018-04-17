@@ -21,8 +21,8 @@ block content
                               i.glyphicon.glyphicon-chevron-down
                             th(scope="col") Section
                             th(scope="col") Change Section
-                            th(scope="col") Closed Quizes
-                            th(scope="col") Open Quizes
+                            th(scope="col") Closed Quizzes
+                            th(scope="col") Open Quizzes
                     tbody
                         each val, index in users
                             tr
@@ -61,25 +61,25 @@ block content
                                 - let quiz_arr = val.closed_quiz
                                 td.align-middle
                                     div.dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
                                         div.dropdown-menu.open_quiz_but
                                             h6.dropdown-header Click to Open Quiz
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
                                                     a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                             else
-                                                a(href="#").dropdown-item No Closed Quizes
+                                                a(href="#").dropdown-item No Closed Quizzes
                                 - quiz_arr = val.open_quiz
                                 td.align-middle
                                     div.dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
                                         div.dropdown-menu.close_quiz_but
                                             h6.dropdown-header Click to Close Quiz
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
                                                     a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                             else
-                                                a(href="#").dropdown-item No Open Quizes
+                                                a(href="#").dropdown-item No Open Quizzes
 
             script(type='text/javascript').
                 $(document).ready(function() {
