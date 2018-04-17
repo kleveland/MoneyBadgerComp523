@@ -2,8 +2,8 @@ extends layoutAdmin.pug
 
 block content
     div.container-fluid
-      div.quizCreateHeader
-        h2.display-4.m-b-2 Section List
+        div.quizCreateHeader
+          h2.display-4.m-b-2 Section List
         div.row
             div.col.mx-1
                 div#accordion
@@ -13,13 +13,13 @@ block content
                                 h5.mb-0.sec-accordion
                                     button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name
                                     div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
                                         div.dropdown-menu
                                             h6.dropdown-header Click to Close Quiz
                                             each val, index in quizes
                                                 a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                     div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
+                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
                                         div.dropdown-menu
                                             h6.dropdown-header Click to Open Quiz
                                             each val, index in quizes
@@ -59,6 +59,8 @@ block content
                                                                         el.appendTo(elAppend);
                                                                     });
                                                                 })
+
+
             script(type='text/javascript').
                 $(document).ready(function() {
                     $(document).on("click", ".openquiz", function() {
@@ -96,3 +98,12 @@ block content
                         });
                     })
                 });
+        br
+        br
+        .container
+          form(action="/admin/csv" method="POST" enctype="multipart/form-data" name="userForm")
+              h1 CSV Upload
+              input(name="csv" type="file")
+              button(type="submit") Submit
+              span.status
+          br
