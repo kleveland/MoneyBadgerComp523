@@ -126,7 +126,14 @@ module.exports = {
 
     openQuiz: function (pid, quiz, cb) {
         let vals = [];
-        vals.push([pid,quiz]);
+        if(Array.isArray(pid) && pid.length > 1) {
+            for(let i=0; i<pid.length; i++) {
+                vals.push([pid[i],quiz]);
+            }
+        } else {
+            vals.push([pid,quiz]);
+        }
+        console.log(vals);
         con.query("INSERT INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
             if (err) throw err;
             console.log("Opened Quiz!");
@@ -135,7 +142,16 @@ module.exports = {
     },
 
     closeQuiz: function (pid, quiz, cb) {
-        con.query("DELETE FROM open_quiz WHERE user_id = " + pid + " AND quiz_id = " + quiz, function (err, result, fields) {
+        let vals = [];
+        if(Array.isArray(pid) && pid.length > 1) {
+            for(let i=0; i<pid.length; i++) {
+                vals.push([pid[i],quiz]);
+            }
+        } else {
+            vals.push([pid,quiz]);
+        }
+        console.log(vals);
+        con.query("DELETE FROM open_quiz WHERE (user_id,quiz_id) IN (?)", [vals], function (err, result, fields) {
             if (err) throw err;
             console.log("Closed Quiz!");
             cb();

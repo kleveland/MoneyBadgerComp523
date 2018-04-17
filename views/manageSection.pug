@@ -9,9 +9,21 @@ block content
                 div#accordion
                     each val, index in sections
                         div.card
-                            div(id="secHeader"+val.id).card_header
-                                h5.mb-0
-                                    button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.section_name + " - " + val.ta_name
+                            div(class="secHeader" id=val.id).card_header
+                                h5.mb-0.sec-accordion
+                                    button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name
+                                    div.dropdown.inline-dropdown
+                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
+                                        div.dropdown-menu
+                                            h6.dropdown-header Click to Close Quiz
+                                            each val, index in quizes
+                                                a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
+                                    div.dropdown.inline-dropdown
+                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
+                                        div.dropdown-menu
+                                            h6.dropdown-header Click to Open Quiz
+                                            each val, index in quizes
+                                                a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                             div(id="sec"+val.id aria-labelledby="sec"+val.id).collapse
                                 div.card-body
                                     table.table.table-hover
@@ -22,7 +34,7 @@ block content
                                                 th(scope="col")
                                         tbody
                                             each val2, index2 in val.students
-                                                tr
+                                                tr(id=val2.pid)
                                                     th(scope="row")=(index2+1)
                                                     td=val2.name
                                                     td
@@ -44,7 +56,43 @@ block content
                                                                     console.log(dat);
                                                                     $.post("/admin/updateSec", dat).done(function(val) {
                                                                         console.log("Posting done.");
-                                                                        el.prependTo(elAppend);
+                                                                        el.appendTo(elAppend);
                                                                     });
                                                                 })
-
+            script(type='text/javascript').
+                $(document).ready(function() {
+                    $(document).on("click", ".openquiz", function() {
+                        console.log("Open quiz", $(this).attr("id"));
+                        let el = $(this);
+                        let secid = $(this).parent().parent().parent().parent().attr("id");
+                        console.log(secid);
+                        console.log($("#sec" + secid + " tr").map(function() {
+                            return $(this).attr("id");
+                        }).get());
+                        $.post("/admin/openquiz", {
+                            user: $("#sec" + secid + " tr").map(function() {
+                                return $(this).attr("id");
+                            }).get(),
+                            quiz_id: $(this).attr("id")
+                        }).done(function() {
+                            console.log("Success Open");
+                        });
+                    })
+                    $(document).on("click", ".closequiz", function() {
+                        console.log("Open quiz", $(this).attr("id"));
+                        let el = $(this);
+                        let secid = $(this).parent().parent().parent().parent().attr("id");
+                        console.log(secid);
+                        console.log($("#sec" + secid + " tr").map(function() {
+                            return $(this).attr("id");
+                        }).get());
+                        $.post("/admin/closequiz", {
+                            user: $("#sec" + secid + " tr").map(function() {
+                                return $(this).attr("id");
+                            }).get(),
+                            quiz_id: $(this).attr("id")
+                        }).done(function() {
+                            console.log("Success Close");
+                        });
+                    })
+                });

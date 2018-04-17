@@ -26,16 +26,17 @@ block content
                     tbody
                         each val, index in users
                             tr
-                                th(scope="row")=(index+1)
-                                td=val.first_name + " " + val.last_name
-                                td=val.onyen
-                                td(id="pid")=val.pid
-                                td=val.type
-                                td(id="secName")=val.name
-                                td
+                                th(scope="row").align-middle=(index+1)
+                                td.align-middle=val.first_name + " " + val.last_name
+                                td.align-middle=val.onyen
+                                td(id="pid").align-middle=val.pid
+                                td.align-middle=val.type
+                                td(id="secName").align-middle=val.name
+                                td.align-middle
                                     div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
                                         div.dropdown-menu(id=val.pid)
+                                            h6.dropdown-header Click to Change Section
                                             each val, index in sections
                                                 a(href="#" class="sec" id=val.id).dropdown-item=val.name
                                             script(type='text/javascript').
@@ -58,20 +59,22 @@ block content
                                                     });
                                                 })
                                 - let quiz_arr = val.closed_quiz
-                                td
+                                td.align-middle
                                     div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizes
                                         div.dropdown-menu.open_quiz_but
+                                            h6.dropdown-header Click to Open Quiz
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
                                                     a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                                             else
                                                 a(href="#").dropdown-item No Closed Quizes
                                 - quiz_arr = val.open_quiz
-                                td
+                                td.align-middle
                                     div.dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizes
                                         div.dropdown-menu.close_quiz_but
+                                            h6.dropdown-header Click to Close Quiz
                                             if quiz_arr.length >= 1
                                                 each val, index in quiz_arr
                                                     a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
@@ -92,7 +95,7 @@ block content
                             console.log("Success Open");
                             el.removeClass("openquiz");
                             el.addClass("closequiz");
-                            el.prependTo(".close_quiz_but");
+                            el.appendTo(".close_quiz_but");
                         });
                     })
                     $(document).on("click", ".closequiz", function() {
@@ -105,7 +108,7 @@ block content
                             console.log("Success Close");
                             el.removeClass("closequiz");
                             el.addClass("openquiz");
-                            el.prependTo(".open_quiz_but");
+                            el.appendTo(".open_quiz_but");
                         });
                     })
                 });

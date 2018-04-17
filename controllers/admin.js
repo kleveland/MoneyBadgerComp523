@@ -49,11 +49,16 @@ module.exports = function (app, dbquiz, dbuser) {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
                 dbuser.getSections((sections) => {
-                    console.log("Test here2");
-                    req.session.dat.sections = sections;
-                    console.log(req.session.dat);
-                    res.render('manageSection', req.session.dat);
-                    req.session.dat.sections = null;
+                    dbquiz.getQuizes((quizes) => {
+                        console.log("Test here2");
+                        req.session.dat.sections = sections;
+                        req.session.dat.quizes = quizes;
+                        console.log('TESTING HERE 2');
+                        console.log(req.session.dat.sections[0].students[0]);
+                        res.render('manageSection', req.session.dat);
+                        req.session.dat.sections = null;
+                        req.session.dat.quizes = null;
+                    })
                 })
             })
         })
@@ -90,4 +95,6 @@ module.exports = function (app, dbquiz, dbuser) {
             });
         });
     })
+
+
 }

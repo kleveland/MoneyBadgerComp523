@@ -11,7 +11,7 @@ module.exports = {
     },
 
     getUsers: function (cb) {
-        con.query('SELECT * FROM users INNER JOIN groups ON users.group_id = groups.group_id INNER JOIN user_section ON users.pid = user_section.pid INNER JOIN section ON user_section.section_id = section.id', function (err, result) {
+        con.query('SELECT * FROM users LEFT JOIN groups ON users.group_id = groups.group_id LEFT JOIN user_section ON users.pid = user_section.pid INNER JOIN section ON user_section.section_id = section.id', function (err, result) {
             if (err) throw err;
 
             console.log("Get Users:")
@@ -161,7 +161,8 @@ module.exports = {
     login: function (req, cb) {
         if (!req.session.dat) {
             req.session.dat = {};
-            req.headers.pid = "720466550";
+            //req.headers.pid = "720470689";
+            //req.headers.pid = "234";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;
                 cb(user);
