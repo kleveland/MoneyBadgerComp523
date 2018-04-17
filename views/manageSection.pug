@@ -2,8 +2,8 @@ extends layoutAdmin.pug
 
 block content
     div.container-fluid
-      div.quizCreateHeader
-        h2.display-4.m-b-2 Section List
+        div.quizCreateHeader
+          h2.display-4.m-b-2 Section List
         div.row
             div.col.mx-1
                 div#accordion
@@ -59,6 +59,8 @@ block content
                                                                         el.appendTo(elAppend);
                                                                     });
                                                                 })
+
+
             script(type='text/javascript').
                 $(document).ready(function() {
                     $(document).on("click", ".openquiz", function() {
@@ -96,3 +98,12 @@ block content
                         });
                     })
                 });
+        br
+        br
+        .container
+          form(action="/admin/csv" method="POST" enctype="multipart/form-data" name="userForm")
+              h1 CSV Upload
+              input(name="csv" type="file")
+              button(type="submit") Submit
+              span.status
+          br

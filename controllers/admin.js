@@ -1,4 +1,4 @@
-module.exports = function (app, dbquiz, dbuser) {
+module.exports = function (app, dbquiz, dbuser, upload) {
 
     app.get('/admin', (req, res) => {
         dbuser.login(req, (user) => {
@@ -95,6 +95,12 @@ module.exports = function (app, dbquiz, dbuser) {
             });
         });
     })
-
-
-}
+    app.post('/admin/csv', upload.any(), (req, res) => {
+        dbuser.login(req, (user) => {
+              dbuser.verifyAdmin(req, res, (adm) => {
+                      console.log(req.files);
+                      res.sendStatus(200);
+                  });
+              });
+        })
+    }

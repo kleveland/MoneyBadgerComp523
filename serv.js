@@ -3,7 +3,10 @@ const express = require('express'),
     mysql = require('mysql'),
     app = express(),
     bodyparser = require('body-parser'),
-    session = require('express-session');
+    session = require('express-session'),
+    multer = require('multer');
+
+var upload = multer({dest: 'uploads/'});
 
 app.set('view engine', 'pug');
 app.use(bodyparser.json()); // to support JSON-encoded bodies
@@ -89,5 +92,5 @@ dbquiz.setCon(con);
 
 
 require('./controllers/main.js')(app, dbquiz, dbuser);
-require('./controllers/admin.js')(app, dbquiz, dbuser);
+require('./controllers/admin.js')(app, dbquiz, dbuser, upload);
 //console.log(questions.questlist[0].answer);
