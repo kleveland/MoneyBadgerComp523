@@ -146,7 +146,6 @@ module.exports = {
     enterUser: function (pid, uid, cb) {
         con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) ?', [[pid, uid, "defaultfirst", "defaultlast", 0]], function (err, result) {
             if (err) throw err;
-
         })
     },
 

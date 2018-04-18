@@ -1,4 +1,4 @@
-module.exports = function (app, dbquiz, dbuser, upload) {
+module.exports = function (app, dbquiz, dbuser, upload, csv) {
 
     app.get('/admin', (req, res) => {
         dbuser.login(req, (user) => {
@@ -102,9 +102,25 @@ module.exports = function (app, dbquiz, dbuser, upload) {
                     if (err) {
                         return res.end("Error uploading file.");
                     }
-                    console.log(req.files[0].originalname, req.files[0]);
-                    //actions for file upload go here
+                    var csvString = req.files[0]["buffer"].toString()
+                    console.log("File is uploaded");
                     res.end("File is uploaded");
+                    var newUsers = [];
+                    csv
+                     .fromString(csvString, {headers: true})
+                     .on("data", function(data){
+                         //console.log(data);
+                         newUsers.push(data);
+                     })
+                     .on("end", function(){
+                        //the new user objects are in this array.
+                        console.log(newUsers);
+
+                        //send to DB here
+                        console.log("done with upload");
+                     });
+                     //console.log(newUsers);
+
                 });
             });
         });

@@ -4,7 +4,8 @@ const express = require('express'),
     app = express(),
     bodyparser = require('body-parser'),
     session = require('express-session'),
-    multer = require('multer');
+    multer = require('multer'),
+    csv = require('fast-csv');
 
 var upload = multer({storage: multer.memoryStorage()}).any();
 
@@ -92,5 +93,5 @@ dbquiz.setCon(con);
 
 
 require('./controllers/main.js')(app, dbquiz, dbuser);
-require('./controllers/admin.js')(app, dbquiz, dbuser, upload);
+require('./controllers/admin.js')(app, dbquiz, dbuser, upload, csv);
 //console.log(questions.questlist[0].answer);
