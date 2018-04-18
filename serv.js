@@ -6,7 +6,7 @@ const express = require('express'),
     session = require('express-session'),
     multer = require('multer');
 
-var upload = multer({dest: 'uploads/'});
+var upload = multer({storage: multer.memoryStorage()}).any();
 
 app.set('view engine', 'pug');
 app.use(bodyparser.json()); // to support JSON-encoded bodies

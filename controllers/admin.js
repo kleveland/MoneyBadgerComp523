@@ -95,12 +95,18 @@ module.exports = function (app, dbquiz, dbuser, upload) {
             });
         });
     })
-    app.post('/admin/csv', upload.any(), (req, res) => {
+    app.post('/admin/csv', (req, res) => {
         dbuser.login(req, (user) => {
-              dbuser.verifyAdmin(req, res, (adm) => {
-                      console.log(req.files);
-                      res.sendStatus(200);
-                  });
-              });
-        })
-    }
+            dbuser.verifyAdmin(req, res, (adm) => {
+                upload(req, res, function (err) {
+                    if (err) {
+                        return res.end("Error uploading file.");
+                    }
+                    console.log(req.files[0].originalname, req.files[0]);
+                    //actions for file upload go here
+                    res.end("File is uploaded");
+                });
+            });
+        });
+    })
+}

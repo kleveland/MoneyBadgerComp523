@@ -60,50 +60,63 @@ block content
                                                                     });
                                                                 })
 
-
-            script(type='text/javascript').
-                $(document).ready(function() {
-                    $(document).on("click", ".openquiz", function() {
-                        console.log("Open quiz", $(this).attr("id"));
-                        let el = $(this);
-                        let secid = $(this).parent().parent().parent().parent().attr("id");
-                        console.log(secid);
-                        console.log($("#sec" + secid + " tr").map(function() {
-                            return $(this).attr("id");
-                        }).get());
-                        $.post("/admin/openquiz", {
-                            user: $("#sec" + secid + " tr").map(function() {
-                                return $(this).attr("id");
-                            }).get(),
-                            quiz_id: $(this).attr("id")
-                        }).done(function() {
-                            console.log("Success Open");
-                        });
-                    })
-                    $(document).on("click", ".closequiz", function() {
-                        console.log("Open quiz", $(this).attr("id"));
-                        let el = $(this);
-                        let secid = $(this).parent().parent().parent().parent().attr("id");
-                        console.log(secid);
-                        console.log($("#sec" + secid + " tr").map(function() {
-                            return $(this).attr("id");
-                        }).get());
-                        $.post("/admin/closequiz", {
-                            user: $("#sec" + secid + " tr").map(function() {
-                                return $(this).attr("id");
-                            }).get(),
-                            quiz_id: $(this).attr("id")
-                        }).done(function() {
-                            console.log("Success Close");
-                        });
-                    })
-                });
         br
         br
         .container
-          form(action="/admin/csv" method="POST" enctype="multipart/form-data" name="userForm")
-              h1 CSV Upload
-              input(name="csv" type="file")
-              button(type="submit") Submit
-              span.status
-          br
+            form#submitSecForm
+                h2 CSV Upload
+                input(name="csv" id="secUpload" type="file")
+                button(type="button" id="submitCsv").btn.btn-success Upload Section
+            span.status
+        br
+    script(type='text/javascript').
+        $(document).ready(function() {
+            $('#submitCsv').on("click",function() {
+                console.log("CLikced import");
+                console.log();
+                let formData = new FormData();
+                formData.append("csv",document.getElementById("secUpload").files[0]);
+                $.ajax({
+                    url: '/admin/csv',
+                    data: formData,
+                    type: 'POST',
+                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                    processData: false, // NEEDED, DON'T OMIT THIS
+                // ... Other options like success and etc
+                });
+            })
+            $(document).on("click", ".openquiz", function() {
+                console.log("Open quiz", $(this).attr("id"));
+                let el = $(this);
+                let secid = $(this).parent().parent().parent().parent().attr("id");
+                console.log(secid);
+                console.log($("#sec" + secid + " tr").map(function() {
+                    return $(this).attr("id");
+                }).get());
+                $.post("/admin/openquiz", {
+                    user: $("#sec" + secid + " tr").map(function() {
+                        return $(this).attr("id");
+                    }).get(),
+                    quiz_id: $(this).attr("id")
+                }).done(function() {
+                    console.log("Success Open");
+                });
+            })
+            $(document).on("click", ".closequiz", function() {
+                console.log("Open quiz", $(this).attr("id"));
+                let el = $(this);
+                let secid = $(this).parent().parent().parent().parent().attr("id");
+                console.log(secid);
+                console.log($("#sec" + secid + " tr").map(function() {
+                    return $(this).attr("id");
+                }).get());
+                $.post("/admin/closequiz", {
+                    user: $("#sec" + secid + " tr").map(function() {
+                        return $(this).attr("id");
+                    }).get(),
+                    quiz_id: $(this).attr("id")
+                }).done(function() {
+                    console.log("Success Close");
+                });
+            })
+        });
