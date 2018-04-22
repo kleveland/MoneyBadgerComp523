@@ -84,6 +84,32 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                 })
             });
         });
+    });
+
+    app.post("/admin/addUser", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                //code for getting data from front end and putting it into correct type list
+
+                dbuser.insertUsers(()=>{
+                  res.sendStatus(200);
+
+                });
+            });
+        });
+    })
+
+    app.post("/admin/deleteUser", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                //code for getting data from front end and putting it into correct type list
+                //then send to deleteUser function on dbuser
+
+                dbuser.deleteUser(()=>{
+                  res.sendStatus(200);
+                });
+            });
+        });
     })
 
     app.post("/admin/closequiz", (req, res) => {
@@ -95,6 +121,8 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
             });
         });
     })
+
+
     app.post('/admin/csvImport', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
@@ -135,7 +163,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                             console.log(sectionID);
 
 
-                            dbuser.insertStudents(studentEntryArray,()=>{
+                            dbuser.insertUsers(studentEntryArray,()=>{
                               console.log("Students added to DB");
                             dbuser.addStudentsToSection(sectionEntryArray,()=> {
                               console.log("Students added to section in DB");
