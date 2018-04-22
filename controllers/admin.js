@@ -95,13 +95,15 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
             });
         });
     })
-    app.post('/admin/csv', (req, res) => {
+    app.post('/admin/csvImport', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
                 upload(req, res, function (err) {
                     if (err) {
                         return res.end("Error uploading file.");
                     }
+                    var taPID = req.session.dat.user["pid"];
+                    var fileName = req.files[0]["originalname"].slice(0, -4);
                     var csvString = req.files[0]["buffer"].toString()
                     console.log("File is uploaded");
                     res.end("File is uploaded");
@@ -109,20 +111,46 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                     csv
                      .fromString(csvString, {headers: true})
                      .on("data", function(data){
-                         //console.log(data);
                          newUsers.push(data);
                      })
                      .on("end", function(){
                         //the new user objects are in this array.
-                        console.log(newUsers);
+                        console.log(taPID);
 
                         //send to DB here
-                        console.log("done with upload");
+                        dbuser.createSection(taPID,fileName,(sectionID) => {
+                          console.log("done with section creation");
+
+                          //adding users to DB
+                          console.log(newUsers);
+                          var studentEntryArray = [];
+                          var sectionEntryArray = [];
+                          for (i = 0; i < newUsers.length; i++) {
+                            name = newUsers[i]["Student Name"].split(",");
+                            studentEntryArray.push([parseInt(newUsers[i]["PID"]), newUsers[i]["Student ID"], name[1], name[0], 3])
+                            sectionEntryArray.push([parseInt(newUsers[i]["PID"]), sectionID]);
+                          }
+                            console.log(studentEntryArray);
+                            console.log("admin.js Section ID");
+                            console.log(sectionID);
+
+
+                            dbuser.insertStudents(studentEntryArray,()=>{
+                              console.log("Students added to DB");
+                            dbuser.addStudentsToSection(sectionEntryArray,()=> {
+                              console.log("Students added to section in DB");
+                              res.redirect('back');
+                            })
+
+                          });
+                        })
+
+                        });
+
                      });
                      //console.log(newUsers);
 
                 });
             });
-        });
     })
-}
+  }

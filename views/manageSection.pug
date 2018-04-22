@@ -77,7 +77,7 @@ block content
                 let formData = new FormData();
                 formData.append("csv",document.getElementById("secUpload").files[0]);
                 $.ajax({
-                    url: '/admin/csv',
+                    url: '/admin/csvImport',
                     data: formData,
                     type: 'POST',
                     contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
