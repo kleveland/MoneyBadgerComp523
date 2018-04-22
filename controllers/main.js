@@ -30,10 +30,28 @@ module.exports = function (app, dbquiz, dbuser) {
                     dbquiz.getQuiz(req.params.id, (result, answers) => {
                         req.session.dat.questions = result;
                         req.session.answers = answers;
-                        console.log("DAT", req.session.dat);
-                        console.log("QUESTIONS", req.session.dat.questions);
-                        console.log(req.session.answers);
-                        res.render('quizview', req.session.dat);
+                        dbquiz.quizGetSubmission(req.session.dat.user.pid, req.params.id, (submission) => {
+                            console.log("SUBMISSION", submission);
+                            for(let i=0; i<req.session.dat.questions.questlist.length; i++) {
+                                req.session.dat.questions.questlist[i].attempts = 0;
+                                for(let j=0; j<submission.length; j++) {
+                                    if(submission[j].question_id == req.session.dat.questions.questlist[i].id) {
+                                        for(let k=0; k<req.session.dat.questions.questlist[i].answers.length; k++) {
+                                            if(req.session.dat.questions.questlist[i].answers[k].ans_id == submission[j].answer_id) {
+                                                req.session.dat.questions.questlist[i].attempts++;
+                                                req.session.dat.questions.questlist[i].answers[k].submission = submission[j];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            console.log("DAT", req.session.dat);
+                            console.log("QUESTIONS", req.session.dat.questions);
+                            console.log(req.session.answers);
+                            res.render('quizview', req.session.dat);
+                        })
                     })
                 } else {
                     res.redirect("/404");
@@ -52,6 +70,7 @@ module.exports = function (app, dbquiz, dbuser) {
             dbquiz.verifyQuizAccess(req.session.dat.questions.quiz_id, user.pid, (access) => {
                 if (access) {
                     console.log("RECIEVED ANSWER", req.body);
+                    console.log('Finished recording submission.');
                     console.log(req.session.dat.questions);
                     for (let i = 0; i < req.session.dat.questions.questlist.length; i++) {
                         if (req.session.dat.questions.questlist[i].id == req.body.question) {
@@ -64,18 +83,24 @@ module.exports = function (app, dbquiz, dbuser) {
                                 }
                             }
                             req.session.answers.questlist[i].ansresponse.answer_id = req.body.answer_choice;
+
                             if (req.session.answers.questlist[i].answer_id == req.body.answer_choice) {
                                 req.session.answers.questlist[i].ansresponse.attempts++;
                                 req.session.answers.questlist[i].ansresponse.correct = true;
-                                res.send(req.session.answers.questlist[i].ansresponse)
                             } else {
                                 console.log("THIS", req.body.answer_choice);
                                 if (typeof req.body.answer_choice != "undefined") {
                                     req.session.answers.questlist[i].ansresponse.attempts++;
                                 }
                                 req.session.answers.questlist[i].ansresponse.correct = false;
-                                res.send(req.session.answers.questlist[i].ansresponse);
                             }
+                            dbquiz.quizSubmission(req.session.dat.user.pid, req.body.quiz, {
+                                quest_id: req.body.question,
+                                answer_id: req.body.answer_choice,
+                                correct: req.session.answers.questlist[i].ansresponse.correct
+                            }, () => {
+                                res.send(req.session.answers.questlist[i].ansresponse);
+                            });
                         }
                     }
                 } else {

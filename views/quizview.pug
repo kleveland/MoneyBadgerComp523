@@ -15,6 +15,9 @@ block content
                                         each ans in val.answers
                                             input(type='radio' name="answer" value=ans.ans_id id="ans"+ans.ans_id)
                                             div(class="anschoice")=  " "+ ans.text
+                                            if ans.submission
+                                                script.
+                                                    answerSubmit("#{ans.submission.correct}", "#{val.id}", "#{ans.ans_id}", "#{val.answers.length}", "#{val.attempts}");
                                             br
                                     div.card-footer
                                         button(type='submit').btn.btn-primary Submit Answer
@@ -25,45 +28,26 @@ block content
         script(type='text/javascript').
                 /* attach a submit handler to all forms in the DOM */
                 $('form').submit(function(event) {
-                /* stop form from submitting default way (which reloads the whole page)*/
-                event.preventDefault();
-                /* get the action attribute from the <form action=""> element -> contains URL to handler*/
-                var $form = $(this),
-                url = $form.attr('action');
-                /* get the question and answer choice selected */
-                quest = $form.attr('name');
-                answer = $('#quest' + quest + ' input:checked').val();
-                //questid = $form.attr('id');
-                /* printing variables before post call is made */
-                console.log(event);
-                console.log(quest);
-                console.log(answer);
-                //console.log(questid);
-                /* Send the data using post */
-                var posting = $.post( url, { quiz: "#{questions.quiz_id}", question: quest, answer_choice: answer } );
-                /* Alerts the results */
-                posting.done(function( data ) {
-                //alert('success');
-                console.log(data);
-                if(data.correct) {
-                    $("#ans"+data.answer_id + " + .anschoice").css('color','green');
-                    $("#ans"+data.answer_id + " + .anschoice").prepend('  ✔   ');
-                    $("#quest"+quest+" .attempts span").html(data.attempts);
-                    $("#quest"+quest+" .attempts span").removeClass("badge-danger");
-                    $("#quest"+quest+" .attempts span").addClass("badge-success");
-                    $("#quest"+quest+" .score").prepend("Score");
-                    console.log(data.number_of_answers - data.attempts);
-                    $("#quest"+quest+" .score span").html(data.number_of_answers - data.attempts);
-                    $('input[type=radio]#ans'+data.answer_id).remove();
-
-                    $("#quest"+quest+" :input").prop("disabled", true);
-                } else {
-                    $("#ans"+data.answer_id + " + .anschoice").css('color','red');
-                    $("#ans"+data.answer_id + " + .anschoice").prepend('   X    ');
-                    $("#quest"+quest+" .attempts span").html(data.attempts);
-                    $('input[type=radio]#ans'+data.answer_id).remove();
-
-                }
-
-                });
+                    /* stop form from submitting default way (which reloads the whole page)*/
+                    event.preventDefault();
+                    /* get the action attribute from the <form action=""> element -> contains URL to handler*/
+                    var $form = $(this),
+                    url = $form.attr('action');
+                    /* get the question and answer choice selected */
+                    quest = $form.attr('name');
+                    answer = $('#quest' + quest + ' input:checked').val();
+                    //questid = $form.attr('id');
+                    /* printing variables before post call is made */
+                    console.log(event);
+                    console.log(quest);
+                    console.log(answer);
+                    //console.log(questid);
+                    /* Send the data using post */
+                    var posting = $.post( url, { quiz: "#{questions.quiz_id}", question: quest, answer_choice: answer } );
+                    /* Alerts the results */
+                    posting.done(function( data ) {
+                        //alert('success');
+                        console.log(data);
+                        answerSubmit(data.correct, quest, data.answer_id, data.number_of_answers, data.attempts );
+                    });
                 });

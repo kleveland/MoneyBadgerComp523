@@ -102,10 +102,11 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                     if (err) {
                         return res.end("Error uploading file.");
                     }
-                    var csvString = req.files[0]["buffer"].toString()
+                    let csvString = req.files[0]["buffer"].toString();
+                    console.log(req.files[0]);
                     console.log("File is uploaded");
                     res.end("File is uploaded");
-                    var newUsers = [];
+                    let newUsers = [];
                     csv
                      .fromString(csvString, {headers: true})
                      .on("data", function(data){

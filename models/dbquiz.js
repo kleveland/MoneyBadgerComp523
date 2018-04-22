@@ -126,14 +126,15 @@ module.exports = {
 
     openQuiz: function (pid, quiz, cb) {
         let vals = [];
-        if(Array.isArray(pid) && pid.length > 1) {
-            for(let i=0; i<pid.length; i++) {
-                vals.push([pid[i],quiz]);
+        if (Array.isArray(pid) && pid.length > 1) {
+            for (let i = 0; i < pid.length; i++) {
+                vals.push([pid[i], quiz]);
             }
         } else {
-            vals.push([pid,quiz]);
+            vals.push([pid, quiz]);
         }
         console.log(vals);
+
         con.query("INSERT INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
             if (err) throw err;
             console.log("Opened Quiz!");
@@ -143,18 +144,41 @@ module.exports = {
 
     closeQuiz: function (pid, quiz, cb) {
         let vals = [];
-        if(Array.isArray(pid) && pid.length > 1) {
-            for(let i=0; i<pid.length; i++) {
-                vals.push([pid[i],quiz]);
+        if (Array.isArray(pid) && pid.length > 1) {
+            for (let i = 0; i < pid.length; i++) {
+                vals.push([pid[i], quiz]);
             }
         } else {
-            vals.push([pid,quiz]);
+            vals.push([pid, quiz]);
         }
         console.log(vals);
         con.query("DELETE FROM open_quiz WHERE (user_id,quiz_id) IN (?)", [vals], function (err, result, fields) {
             if (err) throw err;
             console.log("Closed Quiz!");
             cb();
+        })
+    },
+
+    quizSubmission: function (pid, quizid, questions, cb) {
+        console.log("QUESTION FOMRAT", questions);
+        con.query("INSERT INTO quiz_submission (pid, quiz_id, timestamp) VALUES (" + pid + "," + quizid + ",NOW()) ON DUPLICATE KEY UPDATE timestamp=NOW()", function (err, result, fields) {
+            if (err) throw err;
+            let correctInp = questions.correct ? 1 : 0;
+            con.query("INSERT IGNORE INTO quiz_submission_answers (submission_id, question_id, answer_id, correct) VALUES (?)", [[parseInt(result.insertId), parseInt(questions.quest_id), parseInt(questions.answer_id), parseInt(correctInp)]],
+                function (err, result, fields) {
+                    if (err) throw err;
+                    console.log("Submission of question success.");
+                    cb();
+                })
+        });
+    },
+
+    quizGetSubmission: function (pid, quizid, cb) {
+        con.query("SELECT * FROM quiz_submission_answers WHERE submission_id = (SELECT DISTINCT id FROM quiz_submission WHERE quiz_id = " + quizid + " AND pid = " + pid + ")", function (err, result, fields) {
+            if (err) throw err;
+            console.log("Recieved get submission.");
+            console.log(result);
+            cb(result);
         })
     }
 }
