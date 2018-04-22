@@ -1,0 +1,24 @@
+extends layoutAdmin.pug
+
+block content
+    div.container-fluid
+      div.quizCreateHeader
+        h2.display-4.m-b-2 Quiz List
+        div.row
+            div.col.mx-1
+                table.table.table-hover#userTable
+                    thead
+                        tr
+                            th(scope="col") #
+                            th(scope="col") Name
+                            th(scope="col") Edit
+                            th(scope="col") Delete
+                    tbody
+                        each val, index in quizes
+                            tr
+                                th(scope="row").align-middle=(index+1)
+                                td.align-middle=val.quiz_name
+                                td.align-middle
+                                    button(class="editquiz" id=val.quiz_id type="button").btn.btn-primary Edit
+                                td.align-middle
+                                    button(class="deletequiz" id=val.quiz_id type="button").btn.btn-danger Delete

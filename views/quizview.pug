@@ -17,7 +17,7 @@ block content
                                             div(class="anschoice")=  " "+ ans.text
                                             if ans.submission
                                                 script.
-                                                    answerSubmit("#{ans.submission.correct}", "#{val.id}", "#{ans.ans_id}", "#{val.answers.length}", "#{val.attempts}");
+                                                    answerSubmit("#{ans.submission.correct}", "#{val.id}", "#{ans.ans_id}", "#{ans.submission.ans_num}", "#{val.attempts}");
                                             br
                                     div.card-footer
                                         button(type='submit').btn.btn-primary Submit Answer
@@ -48,6 +48,6 @@ block content
                     posting.done(function( data ) {
                         //alert('success');
                         console.log(data);
-                        answerSubmit(data.correct, quest, data.answer_id, data.number_of_answers, data.attempts );
+                        answerSubmit(data.correct, quest, data.answer_id, data.ans_num, data.new_attempts );
                     });
                 });

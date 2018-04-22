@@ -12,6 +12,14 @@ module.exports = {
         })
     },
 
+
+
+    getUserQuizes: function (pid, cb) {
+        con.query("SELECT * FROM quiz INNER JOIN quiz_submission ON quiz.quiz_id = quiz_submission.quiz_id WHERE pid = " + pid, function (err, result, fields) {
+            cb(result);
+        })
+    },
+
     getOpenQuizes: function (user, cb) {
         con.query("SELECT * FROM quiz INNER JOIN open_quiz ON quiz.quiz_id = open_quiz.quiz_id WHERE user_id = " + user, function (err, result) {
             if (err) throw err;
@@ -30,6 +38,15 @@ module.exports = {
         })
     },
 
+    getQuizAnswers: function(quizid, cb) {
+        con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE answers.correct_answer = 1 AND questions.quiz_id = " + quizid, function(err, result, fields) {
+            if(err) throw err;
+            console.log("QUIZ ANSWERS");
+            console.log(result);
+            cb(result);
+        })
+    },
+
     getQuiz: function (quizid, cb) {
         con.query("SELECT * FROM quiz INNER JOIN questions ON quiz.quiz_id = questions.quiz_id INNER JOIN answers ON questions.question_id = answers.question_id WHERE questions.quiz_id = " + quizid, function (err, result, fields) {
             if (err) throw err;
@@ -44,7 +61,9 @@ module.exports = {
                 questlist: []
             }
             if (questions.length >= 1) {
+                result.quiz_name = questions[0].quiz_name;
                 result.quiz_id = questions[0].quiz_id;
+                answers.quiz_name = questions[0].quiz_name;
                 answers.quiz_id = questions[0].quiz_id;
             }
 
@@ -161,16 +180,21 @@ module.exports = {
 
     quizSubmission: function (pid, quizid, questions, cb) {
         console.log("QUESTION FOMRAT", questions);
-        con.query("INSERT INTO quiz_submission (pid, quiz_id, timestamp) VALUES (" + pid + "," + quizid + ",NOW()) ON DUPLICATE KEY UPDATE timestamp=NOW()", function (err, result, fields) {
+        con.query("INSERT INTO quiz_submission (pid, quiz_id, timestamp, total) VALUES (" + pid + "," + quizid + ",NOW(), (SELECT SUM(tot) - COUNT(*) FROM (SELECT COUNT(*) AS tot FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE questions.quiz_id = " + quizid + " GROUP BY questions.question_id) AS t1)) ON DUPLICATE KEY UPDATE timestamp=NOW()", function (err, result, fields) {
             if (err) throw err;
+            let subId = result.insertId;
             let correctInp = questions.correct ? 1 : 0;
             con.query("INSERT IGNORE INTO quiz_submission_answers (submission_id, question_id, answer_id, correct) VALUES (?)", [[parseInt(result.insertId), parseInt(questions.quest_id), parseInt(questions.answer_id), parseInt(correctInp)]],
                 function (err, result, fields) {
                     if (err) throw err;
-                    console.log("Submission of question success.");
-                    cb();
-                })
-        });
+                    con.query("UPDATE quiz_submission SET score = (SELECT SUM(val1-val2) AS score FROM (SELECT questions.question_id AS question_id,COUNT(*) AS val1 FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE quiz_id = " + quizid + " GROUP BY questions.question_id) AS t1 INNER JOIN (SELECT quiz_submission_answers.question_id AS question_id,COUNT(*) AS val2 FROM quiz_submission_answers WHERE submission_id = " + subId + " GROUP BY quiz_submission_answers.question_id) AS t2 ON t1.question_id = t2.question_id) WHERE pid = " + pid + " AND quiz_id = " + quizid, function (err, result, fields) {
+                        if (err) throw err;
+                        console.log("SCORE", result);
+                        console.log("Submission of question success.");
+                        cb(result.insertId);
+                    })
+                });
+        })
     },
 
     quizGetSubmission: function (pid, quizid, cb) {
