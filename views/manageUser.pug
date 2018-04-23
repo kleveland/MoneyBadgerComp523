@@ -30,7 +30,7 @@ block content
                           each val, index in users
                               tr
                                   td.align-middle
-                                    input(type="checkbox" id=val.pid)
+                                    input(type="checkbox" id=val.pid class = "userSelection")
                                   th(scope="row").align-middle=(index+1)
                                   td.align-middle=val.first_name + " " + val.last_name
                                   td.align-middle=val.onyen
@@ -86,7 +86,7 @@ block content
                                               else
                                                   a(href="#").dropdown-item No Open Quizzes
                   span.deleteButton
-                    button(type="submit").btn.btn-danger Delete Users
+                    button(type="button" class="deleteUsersButton").btn.btn-danger Delete Users
 
 
             br
@@ -107,6 +107,20 @@ block content
 
             script(type='text/javascript').
                 $(document).ready(function() {
+
+                  let checkedUsers = [];
+                  $(".deleteUsersButton").click(function(){
+                  $(".userSelection:checked").each(function(index, el) {
+                    checkedUsers.push($(el).attr("id"));
+                    });
+                    $.post("/admin/deleteUser", {
+                    checkedUsers : checkedUsers
+                    }).done(function() {
+                        location.reload();
+                    });
+                    console.log(checkedUsers);
+                    });
+
                     $("#userTable").tablesorter( {sortList: [[0,0], [1,0]]} );
                     $(document).on("click", ".openquiz", function() {
                         console.log("Open quiz", $(this).attr("id"));

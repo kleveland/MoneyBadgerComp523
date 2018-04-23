@@ -150,7 +150,7 @@ module.exports = {
         })
     },
     deleteUsers: function (usersArray, cb) {
-        con.query('DELETE FROM users WHERE (pid, onyen, first_name, last_name, group_id) IN (?)',[usersArray], function (err, result) {
+        con.query('DELETE FROM users WHERE (pid) IN (?)',[usersArray], function (err, result) {
             if (err) throw err;
             cb();
         })
