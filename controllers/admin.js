@@ -197,7 +197,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                     var taPID = req.session.dat.user["pid"];
                     var fileName = req.files[0]["originalname"].slice(0, -4);
                     var csvString = req.files[0]["buffer"].toString()
-                    var csvHead = csvString.split('\r');
+                    var csvHead = csvString.split('\r\n');
                     if(csvHead[0] != 'Student ID,Student Name,PID'){
                         console.log("Incorrect CSV header format!\n Must be in format: Student ID,Student Name,PID");
                         console.log(csvHead[0]);
