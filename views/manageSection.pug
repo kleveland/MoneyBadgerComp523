@@ -82,8 +82,12 @@ block content
                     type: 'POST',
                     contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
                     processData: false, // NEEDED, DON'T OMIT THIS
+
+                    success: function(){
+                      location.reload();
+                    }
                 // ... Other options like success and etc
-                });
+                })
             })
             $(document).on("click", ".openquiz", function() {
                 console.log("Open quiz", $(this).attr("id"));
