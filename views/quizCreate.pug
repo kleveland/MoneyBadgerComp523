@@ -144,6 +144,9 @@ block content
         function addQuiz() {
             let dat = {};
             dat.name = $("#quizName").val();
+            if($.trim(dat.name) == ''){
+                alert("You must give your new quiz a name!");
+            }else{
 
             dat.questions = questions;
             console.log(dat);
@@ -156,4 +159,5 @@ block content
                 $("#quizName").val('');
             })
             //alert("Quiz added.")
+        }
         }
