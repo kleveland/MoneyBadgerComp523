@@ -65,29 +65,33 @@ block content
         .container
             form#submitSecForm
                 h2 CSV Upload
-                input(name="csv" id="secUpload" type="file")
+                input(name="csv" id="secUpload" type="file" accept=".csv")
                 button(type="button" id="submitCsv").btn.btn-success Upload Section
             span.status
         br
     script(type='text/javascript').
         $(document).ready(function() {
             $('#submitCsv').on("click",function() {
-                console.log("Clicked import");
-                console.log();
-                let formData = new FormData();
-                formData.append("csv",document.getElementById("secUpload").files[0]);
-                $.ajax({
-                    url: '/admin/csvImport',
-                    data: formData,
-                    type: 'POST',
-                    contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-                    processData: false, // NEEDED, DON'T OMIT THIS
+                if(!$('#secUpload').val() || $('#secUpload').val().slice(-4) != '.csv'){
+                        alert('Please choose a csv file to upload.');
+                    }else{
+                        console.log("Clicked import");
+                        console.log();
+                        let formData = new FormData();
+                        formData.append("csv",document.getElementById("secUpload").files[0]);
+                        $.ajax({
+                            url: '/admin/csvImport',
+                            data: formData,
+                            type: 'POST',
+                            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+                            processData: false, // NEEDED, DON'T OMIT THIS
 
-                    success: function(){
-                      location.reload();
+                            success: function(){
+                              location.reload();
+                            }
+                        // ... Other options like success and etc
+                        });
                     }
-                // ... Other options like success and etc
-                })
             })
             $(document).on("click", ".openquiz", function() {
                 console.log("Open quiz", $(this).attr("id"));
