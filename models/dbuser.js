@@ -143,8 +143,14 @@ module.exports = {
         })
     },
 
-    insertStudents: function (studentArray, cb) {
-        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ?',[studentArray], function (err, result) {
+    insertUsers: function (usersArray, cb) {
+        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ?',[usersArray], function (err, result) {
+            if (err) throw err;
+            cb();
+        })
+    },
+    deleteUsers: function (usersArray, cb) {
+        con.query('DELETE FROM users WHERE (pid, onyen, first_name, last_name, group_id) IN (?)',[usersArray], function (err, result) {
             if (err) throw err;
             cb();
         })

@@ -6,80 +6,104 @@ block content
         h2.display-4.m-b-2 User List
         div.row
             div.col.mx-1
-                table.table.table-hover.tablesorter#userTable
-                    thead
-                        tr
-                            th(scope="col") #
-                            th(scope="col") Name 
-                              span(class="fa fa-sort")
-                            th(scope="col") Onyen 
-                              span(class="fa fa-sort")
-                            th(scope="col") PID 
-                              span(class="fa fa-sort")
-                            th(scope="col") Group 
-                              span(class="fa fa-sort")
-                            th(scope="col") Section 
-                              span(class="fa fa-sort")
-                            th(scope="col") Change Section
-                            th(scope="col") Closed Quizzes
-                            th(scope="col") Open Quizzes
-                    tbody
-                        each val, index in users
-                            tr
-                                th(scope="row").align-middle=(index+1)
-                                td.align-middle=val.first_name + " " + val.last_name
-                                td.align-middle=val.onyen
-                                td(id="pid").align-middle=val.pid
-                                td.align-middle=val.type
-                                td(id="secName").align-middle=val.name
-                                td.align-middle
-                                    div.dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
-                                        div.dropdown-menu(id=val.pid)
-                                            h6.dropdown-header Click to Change Section
-                                            each val, index in sections
-                                                a(href="#" class="sec" id=val.id).dropdown-item=val.name
-                                            script(type='text/javascript').
-                                                $(".sec").unbind().click(function() {
-                                                    console.log("section clicked");
-                                                    let dat = {
-                                                        pid: $(this).parent().attr("id"),
-                                                        section: $(this).attr("id")
-                                                    }
-                                                    let setVal = $(this).text();
-                                                    let changeVal = $(this).parent().parent().parent().siblings("#secName");
-                                                    console.log(dat);
-                                                    console.log(changeVal);
-                                                    $.post("/admin/updateSec", dat).done(function(val) {
-                                                        console.log("Posting done.");
-                                                        changeVal.html(setVal);
-                                                        $("#userTable").trigger("updateCell",[changeVal[0], true, () => {
-                                                            console.log("updated cell.");
-                                                        }]);
-                                                    });
-                                                })
-                                - let quiz_arr = val.closed_quiz
-                                td.align-middle
-                                    div.dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
-                                        div.dropdown-menu.open_quiz_but
-                                            h6.dropdown-header Click to Open Quiz
-                                            if quiz_arr.length >= 1
-                                                each val, index in quiz_arr
-                                                    a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
-                                            else
-                                                a(href="#").dropdown-item No Closed Quizzes
-                                - quiz_arr = val.open_quiz
-                                td.align-middle
-                                    div.dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
-                                        div.dropdown-menu.close_quiz_but
-                                            h6.dropdown-header Click to Close Quiz
-                                            if quiz_arr.length >= 1
-                                                each val, index in quiz_arr
-                                                    a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
-                                            else
-                                                a(href="#").dropdown-item No Open Quizzes
+              form.deletingUser
+                  table.table.table-hover.tablesorter#userTable
+                      thead
+                          tr
+                              th(scope="col")
+                              th(scope="col") #
+                              th(scope="col") Name
+                                span(class="fa fa-sort")
+                              th(scope="col") Onyen
+                                span(class="fa fa-sort")
+                              th(scope="col") PID
+                                span(class="fa fa-sort")
+                              th(scope="col") Group
+                                span(class="fa fa-sort")
+                              th(scope="col") Section
+                                span(class="fa fa-sort")
+                              th(scope="col") Change Section
+                              th(scope="col") Closed Quizzes
+                              th(scope="col") Open Quizzes
+
+                      tbody
+                          each val, index in users
+                              tr
+                                  td.align-middle
+                                    input(type="checkbox" id=val.pid)
+                                  th(scope="row").align-middle=(index+1)
+                                  td.align-middle=val.first_name + " " + val.last_name
+                                  td.align-middle=val.onyen
+                                  td(id="pid").align-middle=val.pid
+                                  td.align-middle=val.type
+                                  td(id="secName").align-middle=val.name
+                                  td.align-middle
+                                      div.dropdown
+                                          button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
+                                          div.dropdown-menu(id=val.pid)
+                                              h6.dropdown-header Click to Change Section
+                                              each val, index in sections
+                                                  a(href="#" class="sec" id=val.id).dropdown-item=val.name
+                                              script(type='text/javascript').
+                                                  $(".sec").unbind().click(function() {
+                                                      console.log("section clicked");
+                                                      let dat = {
+                                                          pid: $(this).parent().attr("id"),
+                                                          section: $(this).attr("id")
+                                                      }
+                                                      let setVal = $(this).text();
+                                                      let changeVal = $(this).parent().parent().parent().siblings("#secName");
+                                                      console.log(dat);
+                                                      console.log(changeVal);
+                                                      $.post("/admin/updateSec", dat).done(function(val) {
+                                                          console.log("Posting done.");
+                                                          changeVal.html(setVal);
+                                                          $("#userTable").trigger("updateCell",[changeVal[0], true, () => {
+                                                              console.log("updated cell.");
+                                                          }]);
+                                                      });
+                                                  })
+                                  - let quiz_arr = val.closed_quiz
+                                  td.align-middle
+                                      div.dropdown
+                                          button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
+                                          div.dropdown-menu.open_quiz_but
+                                              h6.dropdown-header Click to Open Quiz
+                                              if quiz_arr.length >= 1
+                                                  each val, index in quiz_arr
+                                                      a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
+                                              else
+                                                  a(href="#").dropdown-item No Closed Quizzes
+                                  - quiz_arr = val.open_quiz
+                                  td.align-middle
+                                      div.dropdown
+                                          button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
+                                          div.dropdown-menu.close_quiz_but
+                                              h6.dropdown-header Click to Close Quiz
+                                              if quiz_arr.length >= 1
+                                                  each val, index in quiz_arr
+                                                      a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
+                                              else
+                                                  a(href="#").dropdown-item No Open Quizzes
+                  span.deleteButton
+                    button(type="submit").btn.btn-danger Delete Users
+
+
+            br
+            br
+            .container
+                form.manuallyAddingUser
+                    h2 Add User
+                    input(name="PID" id="PID" type="text" placeholder ="PID")
+                    input(name="onyen" id="onyen" type="text" placeholder ="Onyen")
+                    input(name="First Name" id="firstName" type="text" placeholder ="First Name")
+                    input(name="Last Name" id="lastName" type="text" placeholder ="Last Name")
+                    select.typeOfUser
+                      option(value = "3") Student
+                      option(value = "2") TA
+                    button(type="button" id="addUser").btn.btn-success Add User
+                span.status
+            br
 
             script(type='text/javascript').
                 $(document).ready(function() {
