@@ -71,7 +71,7 @@ block content
         br
     script(type='text/javascript').
         $(document).ready(function() {
-        $('#submitCsv').on("click",function() {
+          $('#submitCsv').on("click",function() {
             if(!$('#secUpload').val() || $('#secUpload').val().slice(-4) != '.csv'){
                     alert('Please choose a csv file to upload.');
                 }else{
