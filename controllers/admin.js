@@ -159,8 +159,8 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                 //code for getting data from front end and putting it into correct type list
                 //then send to deleteUser function on dbuser
 
-                dbuser.deleteUsers(req.body.checkedUsers,() => {
-                    res.end();
+                dbuser.deleteUser(() => {
+                    res.sendStatus(200);
                 });
             });
         });
@@ -187,6 +187,13 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                     var taPID = req.session.dat.user["pid"];
                     var fileName = req.files[0]["originalname"].slice(0, -4);
                     var csvString = req.files[0]["buffer"].toString()
+                    var csvHead = csvString.split('\r');
+                    if(csvHead[0] != 'Student ID,Student Name,PID'){
+                        console.log("Incorrect CSV header format!\n Must be in format: Student ID,Student Name,PID");
+                        console.log(csvHead[0]);
+                        res.end();
+                        
+                    }else{
 
                     console.log("File is uploaded");
                     res.end("File is uploaded");
@@ -223,15 +230,14 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                                     console.log("Students added to DB");
                                     dbuser.addStudentsToSection(sectionEntryArray, () => {
                                         console.log("Students added to section in DB");
-                                        res.end();
-
+                                        res.redirect('back');
                                     })
 
                                 });
                             })
 
                         });
-
+                    }
                 });
                 //console.log(newUsers);
 
