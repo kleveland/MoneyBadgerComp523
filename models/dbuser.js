@@ -41,7 +41,7 @@ module.exports = {
                                 }
                             }
                         }
-                        if(result[i].open_quiz.length == 0) {
+                        if (result[i].open_quiz.length == 0) {
                             result[i].closed_quiz = quizes;
                         }
                     }
@@ -137,63 +137,65 @@ module.exports = {
         });
     },
 
-    updateSection: function(pid, section, cb) {
-        con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function(err, result) {
+    updateSection: function (pid, section, cb) {
+        con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function (err, result) {
             cb("OK");
         })
     },
 
     insertUsers: function (usersArray, cb) {
-        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ?',[usersArray], function (err, result) {
+        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ?', [usersArray], function (err, result) {
             if (err) throw err;
             cb();
         })
     },
+
     deleteUsers: function (usersArray, cb) {
-        con.query('DELETE FROM users WHERE (pid, onyen, first_name, last_name, group_id) IN (?)',[usersArray], function (err, result) {
+        con.query('DELETE FROM users WHERE (pid, onyen, first_name, last_name, group_id) IN (?)', [usersArray], function (err, result) {
             if (err) throw err;
             cb();
         })
     },
+
     createSection: function (taPID, sectionName, cb) {
         var sectionID;
-        console.log('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")');
+        console.log('INSERT INTO ta_section (ta_id, section_id) values ("' + taPID + '","' + sectionID + '")');
         con.query('INSERT INTO section (name) values ("' + sectionName + '")', function (err, result) {
-          if (err) throw err;
+            if (err) throw err;
         })
         console.log(sectionName);
         console.log('Select id from section where name = "' + sectionName + '"');
         con.query('Select id from section where name = "' + sectionName + '"', function (err, result2) {
-          if (err) throw err;
+            if (err) throw err;
 
-          sectionID = result2[result2.length-1]["id"];
-          console.log("Backend sectionIDDD");
-          console.log(sectionID);
+            sectionID = result2[result2.length - 1]["id"];
+            console.log("Backend sectionIDDD");
+            console.log(sectionID);
 
-          //inserting into ta_section
-          console.log('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")');
-          con.query('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")', function (err, result3) {
-          if (err) throw err;
-          cb(sectionID);
+            //inserting into ta_section
+            console.log('INSERT INTO ta_section (ta_id, section_id) values ("' + taPID + '","' + sectionID + '")');
+            con.query('INSERT INTO ta_section (ta_id, section_id) values ("' + taPID + '","' + sectionID + '")', function (err, result3) {
+                if (err) throw err;
+                cb(sectionID);
+            })
+
         })
-
-    })
-  },
+    },
 
     //linkSectionToTa: function(taPID, sectionID){
-      //console.log('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")');
+    //console.log('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")');
 
-      //con.query('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")', function (err, result3, sectionID) {
-      //if (err) throw err;
+    //con.query('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")', function (err, result3, sectionID) {
+    //if (err) throw err;
     //})
     //},
 
     addStudentsToSection: function (sectionEntryArray, cb) {
         //console.log('INSERT INTO user_section (pid, section_id) values ("' +studentPID+ '","' +sectionID+ '")');
-        con.query('INSERT INTO user_section (pid, section_id) values ?',[sectionEntryArray], function (err, result3, sectionID) {
-          if (err) throw err;
-          cb();
-      })
+        con.query('INSERT INTO user_section (pid, section_id) values ?', [sectionEntryArray], function (err, result3, sectionID) {
+            if (err) throw err;
+            cb();
+        })
     },
 
 
