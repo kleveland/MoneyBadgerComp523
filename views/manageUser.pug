@@ -98,10 +98,13 @@ block content
                     input(name="onyen" id="onyen" type="text" placeholder ="Onyen")
                     input(name="First Name" id="firstName" type="text" placeholder ="First Name")
                     input(name="Last Name" id="lastName" type="text" placeholder ="Last Name")
-                    select.typeOfUser
+                    select(id = "typeOfUser").typeOfUser
                       option(value = "3") Student
                       option(value = "2") TA
-                    button(type="button" id="addUser").btn.btn-success Add User
+                    select(id = "sectionSelection")
+                      each val, index in sections
+                        option(value = val.id)= val.name
+                    button(type="button" id="addUser" class = "addUserButton").btn.btn-success Add User
                 span.status
             br
 
@@ -120,6 +123,24 @@ block content
                     });
                     console.log(checkedUsers);
                     });
+                  let userInfo = [];
+                  $(".addUserButton").click(function(){
+                    userInfo[0] = $("#PID").val();
+                    userInfo[1] = $("#onyen").val();
+                    userInfo[2] = $("#firstName").val();
+                    userInfo[3] = $("#lastName").val();
+                    userInfo[4] = $("#typeOfUser").val();
+                    sectionID = $("#sectionSelection").val();
+
+
+                    $.post("/admin/addUser", {
+                    newUser : userInfo,
+                    sectionID : sectionID
+                    }).done(function() {
+                        location.reload();
+                    });
+
+                  });
 
                     $("#userTable").tablesorter( {sortList: [[0,0], [1,0]]} );
                     $(document).on("click", ".openquiz", function() {
