@@ -1,6 +1,36 @@
 extends layoutAdmin.pug
 
 block content
+    div(tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true").modal.fade#editmodal
+        div(role="document").modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title#exampleModalLabel Add user
+                    button(type="button" class="closebut" data-dismiss="modal" aria-label="Close").close
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    form.manuallyAddingUser.form-group
+                        label(for="PID") PID
+                        input(name="PID" class="form-control" id="PID" type="text" placeholder ="PID")
+                        label(for="onyen") Onyen
+                        input(name="onyen" class="form-control" id="onyen" type="text" placeholder ="Onyen")
+                        label(for="firstName") First Name
+                        input(name="First Name" class="form-control" id="firstName" type="text" placeholder ="First Name")
+                        label(for="lastName") Last Name
+                        input(name="Last Name" class="form-control" id="lastName" type="text" placeholder ="Last Name")
+                        label(for="typeOfUser") User Group
+                        select(class="form-control" id = "typeOfUser").typeOfUser
+                          option(value = "3") Student
+                          option(value = "2") TA
+                        label(for="sectionSelection") Section
+                        select(class="form-control" id = "sectionSelection")
+                          each val, index in sections
+                            option(value = val.id)= val.name
+                        br
+                    span.status
+                div.modal-footer
+                    button(type="button" class="closebut" data-dismiss="modal").btn.btn-secondary Cancel
+                    button(type="button" id="addUser" class = "addUserButton").btn.btn-success Add User
     div.container-fluid
       div.quizCreateHeader
         h2.display-4.m-b-2 User List
@@ -87,30 +117,14 @@ block content
                                                   a(href="#").dropdown-item No Open Quizzes
                   span.deleteButton
                     button(type="button" class="deleteUsersButton").btn.btn-danger Delete Users
-
-
-            br
-            br
-            .container
-                form.manuallyAddingUser
-                    h2 Add User
-                    input(name="PID" id="PID" type="text" placeholder ="PID")
-                    input(name="onyen" id="onyen" type="text" placeholder ="Onyen")
-                    input(name="First Name" id="firstName" type="text" placeholder ="First Name")
-                    input(name="Last Name" id="lastName" type="text" placeholder ="Last Name")
-                    select(id = "typeOfUser").typeOfUser
-                      option(value = "3") Student
-                      option(value = "2") TA
-                    select(id = "sectionSelection")
-                      each val, index in sections
-                        option(value = val.id)= val.name
-                    button(type="button" id="addUser" class = "addUserButton").btn.btn-success Add User
-                span.status
-            br
+                  span.AddButton
+                    button(type="button" class="addUsersButton").btn.btn-success.button-left Add User
 
             script(type='text/javascript').
                 $(document).ready(function() {
-
+                    $(".addUsersButton").click(function() {
+                        $("#editmodal").modal('show');
+                    })
                   let checkedUsers = [];
                   $(".deleteUsersButton").click(function(){
                   $(".userSelection:checked").each(function(index, el) {

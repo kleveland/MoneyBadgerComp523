@@ -47,9 +47,9 @@ let config = {
     database: {
         host: "localhost",
         user: "root",
-        password: "root",
+        password: "",
         database: "comp523",
-        port: "8889"
+        port: "3306"
     }
 };
 
