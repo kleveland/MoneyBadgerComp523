@@ -159,8 +159,8 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                 //code for getting data from front end and putting it into correct type list
                 //then send to deleteUser function on dbuser
 
-                dbuser.deleteUser(() => {
-                    res.sendStatus(200);
+                dbuser.deleteUsers(req.body.checkedUsers,() => {
+                    res.end();
                 });
             });
         });
@@ -230,7 +230,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                                     console.log("Students added to DB");
                                     dbuser.addStudentsToSection(sectionEntryArray, () => {
                                         console.log("Students added to section in DB");
-                                        res.redirect('back');
+                                        res.end();
                                     })
 
                                 });
