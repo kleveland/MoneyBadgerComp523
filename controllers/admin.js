@@ -144,9 +144,19 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
                 //code for getting data from front end and putting it into correct type list
+                req.body.newUser[0] = parseInt(req.body.newUser[0]);
+                req.body.newUser[4] = parseInt(req.body.newUser[4]);
+                console.log(req.body.newUser)
+                dbuser.insertUsers([req.body.newUser],() => {
+                    console.log("new Manual User: "+req.body.newUser[1]+" Added to Users table")
+                    var sectionAddArray = [];
 
-                dbuser.insertUsers(() => {
-                    res.sendStatus(200);
+                    sectionAddArray.push([parseInt(req.body.newUser[0]), parseInt(req.body.sectionID)]);
+                    console.log(sectionAddArray);
+                    dbuser.addStudentsToSection(sectionAddArray, () => {
+                        console.log("Students added to section in DB");
+                        res.end();
+                    });
 
                 });
             });
