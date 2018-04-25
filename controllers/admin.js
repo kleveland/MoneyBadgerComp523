@@ -213,6 +213,11 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
     })
 
 
+    app.get('/admin/exportQuizes', (req, res) => {
+        res.status(200).download("./uploads/temp/export.csv");
+    });
+
+
     app.post('/admin/exportQuizes', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
