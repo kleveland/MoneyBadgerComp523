@@ -38,9 +38,9 @@ module.exports = {
         })
     },
 
-    getQuizAnswers: function(quizid, cb) {
-        con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE answers.correct_answer = 1 AND questions.quiz_id = " + quizid, function(err, result, fields) {
-            if(err) throw err;
+    getQuizAnswers: function (quizid, cb) {
+        con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE answers.correct_answer = 1 AND questions.quiz_id = " + quizid, function (err, result, fields) {
+            if (err) throw err;
             console.log("QUIZ ANSWERS");
             console.log(result);
             cb(result);
@@ -175,6 +175,97 @@ module.exports = {
             if (err) throw err;
             console.log("Closed Quiz!");
             cb();
+        })
+    },
+
+    deleteQuizes: function (quizes, cb) {
+        console.log("QUIZES", quizes);
+        con.query("DELETE FROM quiz WHERE (quiz_id) IN (?)", [quizes], function (err, result) {
+            if (err) throw err;
+            cb();
+        })
+    },
+
+    exportQuizes: function (quizes, cb) {
+        console.log("QUIZES", quizes);
+        con.query("SELECT * FROM users INNER JOIN quiz_submission ON users.pid = quiz_submission.pid INNER JOIN quiz ON quiz_submission.quiz_id = quiz.quiz_id WHERE quiz.quiz_id IN (?)", [quizes], function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            let grades = [];
+            let students = [];
+            for (let i = 0; i < result.length; i++) {
+                for (let j = 0; j < grades.length; j++) {
+                    //console.log("i:",i,"j",j,"pid",result[i].pid);
+                    if (grades[j].quiz_id == result[i].quiz_id) {
+                        //console.log("PUSH1", result[i].quiz_id);
+                        grades[j].grades.push({score: result[i].score, pid: result[i].pid});
+                        if (grades[j].total < result[i].total) {
+                            grades[j].total = result[i].total;
+                        }
+                        break;
+                    }
+                    if (j == grades.length - 1) {
+                        grades.push({
+                            quiz_id: result[i].quiz_id,
+                            name: result[i].quiz_name,
+                            total: result[i].total,
+                            grades: []
+                        });
+                        //console.log("PUSH2", result[i].quiz_id);
+                        grades[grades.length - 1].grades.push({score: result[i].score, pid: result[i].pid})
+                        break;
+                    }
+                }
+                if (grades.length == 0) {
+                    grades.push({
+                        quiz_id: result[i].quiz_id,
+                        name: result[i].quiz_name,
+                        total: result[i].total,
+                        grades: []
+                    });
+                    //console.log("PUSH3", result[i].quiz_id);
+                    grades[grades.length - 1].grades.push({score: result[i].score, pid: result[i].pid});
+                }
+                for (let j = 0; j < students.length; j++) {
+                    if (students[j].pid == result[i].pid) {
+                        break;
+                    }
+                    if (j == students.length - 1) {
+                        students.push({
+                            pid: result[i].pid,
+                            onyen: result[i].onyen,
+                            name: result[i].last_name + ", " + result[i].first_name
+                        });
+                    }
+                }
+
+                if (students.length == 0) {
+                    students.push({
+                        pid: result[i].pid,
+                        onyen: result[i].onyen,
+                        name: result[i].last_name + ", " + result[i].first_name
+                    });
+
+                }
+            }
+            console.log("GRADES");
+            console.log(grades);
+            console.log("STUDENTS");
+            console.log(students);
+            /*
+            {
+              onyen: "",
+              name: "",
+              pid: xx
+            }
+            {
+              quiz_id: xx,
+              name: "",
+              total: xx,
+              grades, [xx, xx, xx, ..]
+            }
+            */
+            cb(grades, students);
         })
     },
 

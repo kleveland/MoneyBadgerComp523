@@ -6,7 +6,7 @@ block content
         h1.header-spacer.m-b-2 Quiz List
         nav.navbar.navbar-light.bg-light.admin-navbar
             form.form-inline
-                button(type="button" class="addQuizButton").btn.btn-success.button-left Add Quiz
+                a( href="/admin/createQuiz" role="button" class="addQuizButton").btn.btn-success.button-left Add Quiz
                 button(type="button" class="deleteQuizesButton").btn.btn-danger.button-left Delete Selected Quizes
                 button(type="button" class="exportQuizesButton").btn.btn-primary.button-left Export Selected Quizes
         div.row
@@ -26,3 +26,28 @@ block content
                                 td.align-middle=val.quiz_name
                                 td.align-middle
                                     button(class="editquiz" id=val.quiz_id type="button").btn.btn-primary Edit
+    script.
+        $(document).ready(function() {
+            $(".deleteQuizesButton").click(function() {
+                let checkedQuizes = [];
+                $(".quizSelection:checked").each(function(index, el) {
+                    checkedQuizes.push($(el).attr("id"));
+                });
+                $.post("/admin/deleteQuizes", {quizes: checkedQuizes}).done(function() {
+                    console.log("Done deleting quizes");
+                    location.reload(true);
+                });
+            })
+
+            $(".exportQuizesButton").click(function() {
+                let checkedQuizes = [];
+                $(".quizSelection:checked").each(function(index, el) {
+                    checkedQuizes.push($(el).attr("id"));
+                });
+                $.post("/admin/exportQuizes", {quizes: checkedQuizes}).done(function(res) {
+                    console.log("DONE");
+                    console.log(res);
+                });
+            })
+
+        })

@@ -1,9 +1,29 @@
 extends layoutAdmin.pug
 
 block content
+    div(tabindex="-1" role="dialog" aria-labelledby="EditModalLabel" aria-hidden="true").modal.fade#editmodal
+        div(role="document").modal-dialog
+            div.modal-content
+                div.modal-header
+                    h5.modal-title#exampleModalLabel Add Section
+                    button(type="button" class="closebut" data-dismiss="modal" aria-label="Close").close
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    form.manuallyAddingUser.form-group
+                        label(for="TA") TA Assignment
+                        select(name="TA" class="form-control" id="TA" type="text" placeholder ="TA")
+                        label(for="csv") Upload Class Roster (CSV)
+                        input(name="secUpload" class="form-control-file" id="secUpload" type="file" accept=".csv")
+                        span.status
+                div.modal-footer
+                    button(type="button" class="closebut" data-dismiss="modal").btn.btn-secondary Cancel
+                    button(type="button" id="submitCsv").btn.btn-success Add Section
     div.container-fluid
         div.quizCreateHeader
             h1.header-spacer.m-b-2 Section List
+            nav.navbar.navbar-light.bg-light.admin-navbar
+                form.form-inline
+                    button(type="button" class="addSectionButton").btn.btn-success.button-left Add Section
         div.row
             div.col.mx-1
                 div#accordion
@@ -59,18 +79,18 @@ block content
                                                                         el.appendTo(elAppend);
                                                                     });
                                                                 })
-
-        br
-        br
-        .container
-            form#submitSecForm
-                h2 CSV Upload
-                input(name="csv" id="secUpload" type="file" accept=".csv")
-                button(type="button" id="submitCsv").btn.btn-success Upload Section
-            span.status
-        br
     script(type='text/javascript').
         $(document).ready(function() {
+
+            $('.addSectionButton').click(function() {
+                $.post('/admin/getUnassignedTAs').done(function(dat) {
+                    console.log(dat);
+                    for(let i=0; i<dat.length; i++) {
+                        $('#TA').append("<option value='" + dat[i].pid + "'>" + dat[i].first_name + " " + dat[i].last_name + "</select>")
+                    }
+                    $("#editmodal").modal('show');
+                })
+            })
           $('#submitCsv').on("click",function() {
             if(!$('#secUpload').val() || $('#secUpload').val().slice(-4) != '.csv'){
                     alert('Please choose a csv file to upload.');
@@ -78,6 +98,7 @@ block content
                     console.log("Clicked import");
                     console.log();
                     let formData = new FormData();
+                    formData.append("ta",$("#TA").val());
                     formData.append("csv",document.getElementById("secUpload").files[0]);
                     $.ajax({
                         url: '/admin/csvImport',
@@ -87,7 +108,7 @@ block content
                         processData: false, // NEEDED, DON'T OMIT THIS
 
                         success: function(){
-                              location.reload();
+                              location.reload(true);
                             }
                         // ... Other options like success and etc
                         });

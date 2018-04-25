@@ -23,7 +23,7 @@ block content
                           option(value = "3") Student
                           option(value = "2") TA
                         label(for="sectionSelection") Section
-                        select(class="form-control" id = "sectionSelection")
+                        select(class="form-control" id = "sectionSelection").secSelec
                           each val, index in sections
                             option(value = val.id)= val.name
                         br
@@ -123,6 +123,15 @@ block content
                 $(document).ready(function() {
                     $(".addUsersButton").click(function() {
                         $("#editmodal").modal('show');
+                    })
+
+                    $(".typeOfUser").change(function() {
+                        console.log($(".typeofUser").val());
+                        if($(".typeOfUser").val() == 2) {
+                            $(".secSelec").prop("disabled", true);
+                        } else {
+                            $(".secSelec").prop("disabled", false);
+                        }
                     })
                   let checkedUsers = [];
                   $(".deleteUsersButton").click(function(){

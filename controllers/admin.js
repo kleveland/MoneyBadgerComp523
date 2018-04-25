@@ -1,4 +1,4 @@
-module.exports = function (app, dbquiz, dbuser, upload, csv) {
+module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
 
     app.get('/admin', (req, res) => {
         dbuser.login(req, (user) => {
@@ -147,16 +147,20 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                 req.body.newUser[0] = parseInt(req.body.newUser[0]);
                 req.body.newUser[4] = parseInt(req.body.newUser[4]);
                 console.log(req.body.newUser)
-                dbuser.insertUsers([req.body.newUser],() => {
-                    console.log("new Manual User: "+req.body.newUser[1]+" Added to Users table")
+                dbuser.insertUsers([req.body.newUser], () => {
+                    console.log("new Manual User: " + req.body.newUser[1] + " Added to Users table")
                     var sectionAddArray = [];
 
                     sectionAddArray.push([parseInt(req.body.newUser[0]), parseInt(req.body.sectionID)]);
                     console.log(sectionAddArray);
-                    dbuser.addStudentsToSection(sectionAddArray, () => {
-                        console.log("Students added to section in DB");
+                    if (req.body.newUser[4]) {
                         res.end();
-                    });
+                    } else {
+                        dbuser.addStudentsToSection(sectionAddArray, () => {
+                            console.log("Students added to section in DB");
+                            res.end();
+                        });
+                    }
 
                 });
             });
@@ -169,7 +173,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                 //code for getting data from front end and putting it into correct type list
                 //then send to deleteUser function on dbuser
 
-                dbuser.deleteUsers(req.body.checkedUsers,() => {
+                dbuser.deleteUsers(req.body.checkedUsers, () => {
                     res.end();
                 });
             });
@@ -186,6 +190,68 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
         });
     })
 
+    app.post('/admin/getUnassignedTAs', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbuser.getUnassignedTAs((tas) => {
+                    console.log("Handling TA route");
+                    res.send(tas);
+                })
+            });
+        });
+    })
+
+    app.post('/admin/deleteQuizes', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbquiz.deleteQuizes(req.body.quizes, () => {
+                    console.log("Deleted Quizes");
+                    res.end();
+                })
+            });
+        });
+    })
+
+
+    app.post('/admin/exportQuizes', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbquiz.exportQuizes(req.body.quizes, (grades, students) => {
+                    let strbody = "";
+                    let studententry = [];
+                    let header = "";
+                    header += "Student ID,Student Name,PID";
+                    for (let i = 0; i < students.length; i++) {
+                        studententry.push(students[i].onyen + ",\"" + students[i].name + "\"," + students[i].pid);
+                    }
+                    for (let i = 0; i < grades.length; i++) {
+                        header += "," + grades[i].name + " [" + grades[i].total + "]";
+                    }
+                    for (let i = 0; i < students.length; i++) {
+                        console.log("STUDENT", students[i].name);
+                        for (let j = 0; j < grades.length; j++) {
+                            console.log("GRADES", grades[j].name, grades[j].grades);
+                            for (let k = 0; k < grades[j].grades.length; k++) {
+                                console.log(k, grades[j].grades[k]);
+                                if (grades[j].grades[k].pid == students[i].pid) {
+                                    studententry[i] += "," + grades[j].grades[k].score;
+                                }
+                            }
+                        }
+                    }
+                    strbody += header + '\n';
+                    strbody += studententry.join('\n');
+                    console.log(strbody);
+                    let fileName = "export.csv";
+                    var savedFilePath = './uploads/temp/' + fileName; // in some convenient temporary file folder
+                    fs.writeFile(savedFilePath, strbody, function () {
+                        res.status(200).download(savedFilePath, fileName);
+                    });
+                })
+            });
+        });
+    })
+
 
     app.post('/admin/csvImport', (req, res) => {
         dbuser.login(req, (user) => {
@@ -194,59 +260,60 @@ module.exports = function (app, dbquiz, dbuser, upload, csv) {
                     if (err) {
                         return res.end("Error uploading file.");
                     }
-                    var taPID = req.session.dat.user["pid"];
+                    console.log("TA ID", req.body.ta);
+                    var taPID = req.body.ta;
                     var fileName = req.files[0]["originalname"].slice(0, -4);
                     var csvString = req.files[0]["buffer"].toString()
                     var csvHead = csvString.split('\r\n');
-                    if(csvHead[0] != 'Student ID,Student Name,PID'){
+                    if (csvHead[0] != 'Student ID,Student Name,PID') {
                         console.log("Incorrect CSV header format!\n Must be in format: Student ID,Student Name,PID");
                         console.log(csvHead[0]);
                         res.end();
-                        
-                    }else{
 
-                    console.log("File is uploaded");
-                    res.end("File is uploaded");
-                    let newUsers = [];
-                    csv.fromString(csvString, {
-                            headers: true
-                        })
-                        .on("data", function (data) {
-                            newUsers.push(data);
-                        })
-                        .on("end", function () {
-                            //the new user objects are in this array.
-                            console.log(taPID);
+                    } else {
 
-                            //send to DB here
-                            dbuser.createSection(taPID, fileName, (sectionID) => {
-                                console.log("done with section creation");
-
-                                //adding users to DB
-                                console.log(newUsers);
-                                var studentEntryArray = [];
-                                var sectionEntryArray = [];
-                                for (i = 0; i < newUsers.length; i++) {
-                                    name = newUsers[i]["Student Name"].split(",");
-                                    studentEntryArray.push([parseInt(newUsers[i]["PID"]), newUsers[i]["Student ID"], name[1], name[0], 3])
-                                    sectionEntryArray.push([parseInt(newUsers[i]["PID"]), sectionID]);
-                                }
-                                console.log(studentEntryArray);
-                                console.log("admin.js Section ID");
-                                console.log(sectionID);
-
-
-                                dbuser.insertUsers(studentEntryArray, () => {
-                                    console.log("Students added to DB");
-                                    dbuser.addStudentsToSection(sectionEntryArray, () => {
-                                        console.log("Students added to section in DB");
-                                        res.end();
-                                    })
-
-                                });
+                        console.log("File is uploaded");
+                        res.end("File is uploaded");
+                        let newUsers = [];
+                        csv.fromString(csvString, {
+                                headers: true
                             })
+                            .on("data", function (data) {
+                                newUsers.push(data);
+                            })
+                            .on("end", function () {
+                                //the new user objects are in this array.
+                                console.log(taPID);
 
-                        });
+                                //send to DB here
+                                dbuser.createSection(taPID, fileName, (sectionID) => {
+                                    console.log("done with section creation");
+
+                                    //adding users to DB
+                                    console.log(newUsers);
+                                    var studentEntryArray = [];
+                                    var sectionEntryArray = [];
+                                    for (i = 0; i < newUsers.length; i++) {
+                                        name = newUsers[i]["Student Name"].split(",");
+                                        studentEntryArray.push([parseInt(newUsers[i]["PID"]), newUsers[i]["Student ID"], name[1], name[0], 3])
+                                        sectionEntryArray.push([parseInt(newUsers[i]["PID"]), sectionID]);
+                                    }
+                                    console.log(studentEntryArray);
+                                    console.log("admin.js Section ID");
+                                    console.log(sectionID);
+
+
+                                    dbuser.insertUsers(studentEntryArray, () => {
+                                        console.log("Students added to DB");
+                                        dbuser.addStudentsToSection(sectionEntryArray, () => {
+                                            console.log("Students added to section in DB");
+                                            res.end();
+                                        })
+
+                                    });
+                                })
+
+                            });
                     }
                 });
                 //console.log(newUsers);

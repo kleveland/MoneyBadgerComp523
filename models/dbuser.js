@@ -198,6 +198,14 @@ module.exports = {
         })
     },
 
+    getUnassignedTAs: function(cb) {
+        con.query("SELECT * FROM users WHERE group_id = 2 AND users.pid NOT IN (SELECT ta_id FROM ta_section)", function(err, result) {
+            if(err) throw err;
+            console.log("Unassigned TAs", result);
+            cb(result);
+        })
+    },
+
 
     verifyAdmin: function (req, res, cb) {
         if (req.session.dat.user.is_admin) {
