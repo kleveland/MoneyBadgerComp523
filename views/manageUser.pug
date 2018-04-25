@@ -63,7 +63,7 @@ block content
                               each val, index in users
                                   tr
                                       th(scope="row").align-middle
-                                        input(type="checkbox" id=val.quiz_id class = "userSelection")
+                                        input(type="checkbox" id=val.pid class="userSelection")
                                         label(class="form-check-label" style="margin-left: 1em;" for=val.quiz_id)=(index+1)
                                       td.align-middle=val.first_name + " " + val.last_name
                                       td.align-middle=val.onyen
@@ -135,15 +135,17 @@ block content
                     })
                   let checkedUsers = [];
                   $(".deleteUsersButton").click(function(){
-                  $(".userSelection:checked").each(function(index, el) {
-                    checkedUsers.push($(el).attr("id"));
-                    });
-                    $.post("/admin/deleteUser", {
-                    checkedUsers : checkedUsers
-                    }).done(function() {
-                        location.reload();
-                    });
-                    console.log(checkedUsers);
+                        console.log("clicked");
+                      $(".userSelection:checked").each(function(index, el) {
+                        //console.log($(el).attr("id"));
+                        checkedUsers.push($(el).attr("id"));
+                        });
+                        console.log(checkedUsers);
+                        $.post("/admin/deleteUser", {
+                        checkedUsers : checkedUsers
+                        }).done(function() {
+                            //location.reload(true);
+                        });
                     });
                   let userInfo = [];
                   $(".addUserButton").click(function(){

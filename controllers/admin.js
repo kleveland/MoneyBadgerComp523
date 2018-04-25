@@ -172,7 +172,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
             dbuser.verifyAdmin(req, res, (adm) => {
                 //code for getting data from front end and putting it into correct type list
                 //then send to deleteUser function on dbuser
-
+                console.log(req.body.checkedUsers);
                 dbuser.deleteUsers(req.body.checkedUsers, () => {
                     res.end();
                 });

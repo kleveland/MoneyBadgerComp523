@@ -151,6 +151,7 @@ module.exports = {
     },
 
     deleteUsers: function (usersArray, cb) {
+        console.log(usersArray);
         con.query('DELETE FROM users WHERE (pid) IN (?)',[usersArray], function (err, result) {
             if (err) throw err;
             cb();
