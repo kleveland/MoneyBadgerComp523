@@ -10,6 +10,7 @@ module.exports = {
         dbquiz = quiz;
     },
 
+    // function gets all users
     getUsers: function (cb) {
         con.query('SELECT * FROM users LEFT JOIN groups ON users.group_id = groups.group_id LEFT JOIN user_section ON users.pid = user_section.pid INNER JOIN section ON user_section.section_id = section.id', function (err, result) {
             if (err) throw err;
@@ -52,7 +53,7 @@ module.exports = {
             })
         })
     },
-
+    // function gets all sections
     getOnlySections: function (cb) {
         con.query('SELECT * FROM section', function (err, result) {
             if (err) throw err;
@@ -116,7 +117,7 @@ module.exports = {
             cb(secorg);
         })
     },
-
+    // function looks for user in DB.
     findUser: function (pid, cb) {
         con.query('SELECT * FROM users WHERE pid = ' + pid, function (err, result) {
             if (err) throw err;
@@ -136,13 +137,13 @@ module.exports = {
             }
         });
     },
-
+    // Function changes a users section in user_section table.
     updateSection: function (pid, section, cb) {
         con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function (err, result) {
             cb("OK");
         })
     },
-
+    // Function inserts multiple new users into the DB.
     insertUsers: function (usersArray, cb) {
         con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ? ON DUPLICATE KEY UPDATE group_id=3', [usersArray], function (err, result) {
             if (err) throw err;
@@ -150,7 +151,7 @@ module.exports = {
             cb();
         })
     },
-
+    // Function deletes users from the users table.
     deleteUsers: function (usersArray, cb) {
         console.log(usersArray);
         con.query('DELETE FROM users WHERE (pid) IN (?)',[usersArray], function (err, result) {
@@ -158,7 +159,7 @@ module.exports = {
             cb();
         })
     },
-
+    // Function takes current Admin's info and creates a section. This function is for CSV upload of a section.
     createSection: function (taPID, sectionName, cb) {
         var sectionID;
         console.log('INSERT INTO ta_section (ta_id, section_id) values ("' + taPID + '","' + sectionID + '")');
@@ -184,14 +185,7 @@ module.exports = {
         })
     },
 
-    //linkSectionToTa: function(taPID, sectionID){
-    //console.log('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")');
-
-    //con.query('INSERT INTO ta_section (ta_id, section_id) values ("' +taPID+ '","' +sectionID+ '")', function (err, result3, sectionID) {
-    //if (err) throw err;
-    //})
-    //},
-
+    // This function takes users and addes them to a section.
     addStudentsToSection: function (sectionEntryArray, cb) {
         //console.log('INSERT INTO user_section (pid, section_id) values ("' +studentPID+ '","' +sectionID+ '")');
         con.query('INSERT INTO user_section (pid, section_id) values ?', [sectionEntryArray], function (err, result3, sectionID) {
@@ -208,7 +202,7 @@ module.exports = {
         })
     },
 
-
+    // This function verifies a user is a type: admin.
     verifyAdmin: function (req, res, cb) {
         if (req.session.dat.user.is_admin) {
             cb(true);
@@ -216,10 +210,11 @@ module.exports = {
             res.redirect("/404");
         }
     },
-
+    // function helps with user logins and creates session
     login: function (req, cb) {
         if (!req.session.dat) {
             req.session.dat = {};
+            // current default user, on local.
             req.headers.pid = "720462663";
             //req.headers.pid = "237";
             this.findUser(req.headers.pid, (user) => {
