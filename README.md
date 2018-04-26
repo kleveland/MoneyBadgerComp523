@@ -2,7 +2,7 @@ README:
 
 Initial Setup Instructions
 
-1.	Install node. (https://nodejs.org/en/)
+1.	Install nodejs. (https://nodejs.org/en/)
 
 2.	Clone project into working directory.
 
