@@ -6,11 +6,11 @@ Initial Setup Instructions
 
 2.	Clone project into working directory.
 
-3.	Create a mySQL local server using MAMP or XAMP
+3.	Create a mySQL local server using MAMP or XAMP.
 
-4.	Import SQL file from repo into phpMyAdmin in a DB to replicate our DB
+4.	Import SQL file from repo into phpMyAdmin in a DB to replicate our DB.
 
-5.	Go back to working directory with cloned project
+5.	Go back to working directory with cloned project.
 
 6.	Run the command “npm install” from the terminal to install all required dependencies.
 
