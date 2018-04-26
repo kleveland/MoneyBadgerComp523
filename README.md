@@ -6,7 +6,7 @@ Initial Setup Instructions
 
 2.	Clone project into working directory.
 
-3.	Create a mySQL local server using MAMP or XAMP.
+3.	Create a MySQL local server using MAMP or XAMP.
 
 4.	Import SQL file from repo into phpMyAdmin in a DB to replicate our DB.
 
