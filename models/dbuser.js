@@ -34,11 +34,21 @@ module.exports = {
                             }
                         }
                     }
+                    let pushQuiz = true;
                     for (let i = 0; i < result.length; i++) {
                         for (let j = 0; j < result[i].open_quiz.length; j++) {
                             for (let k = 0; k < quizes.length; k++) {
                                 if (result[i].open_quiz[j].quiz_id != quizes[k].quiz_id) {
-                                    result[i].closed_quiz.push(quizes[k]);
+                                    for (let t = 0; t < result[i].closed_quiz.length; t++) {
+                                        if (result[i].closed_quiz[t].quiz_id == quizes[k].quiz_id) {
+                                            pushQuiz = false;
+                                            break;
+                                        }
+                                    }
+                                    if (pushQuiz) {
+                                        result[i].closed_quiz.push(quizes[k]);
+                                        pushQuiz = true;
+                                    }
                                 }
                             }
                         }
@@ -154,7 +164,7 @@ module.exports = {
     // Function deletes users from the users table.
     deleteUsers: function (usersArray, cb) {
         console.log(usersArray);
-        con.query('DELETE FROM users WHERE (pid) IN (?)',[usersArray], function (err, result) {
+        con.query('DELETE FROM users WHERE (pid) IN (?)', [usersArray], function (err, result) {
             if (err) throw err;
             cb();
         })
@@ -194,9 +204,9 @@ module.exports = {
         })
     },
 
-    getUnassignedTAs: function(cb) {
-        con.query("SELECT * FROM users WHERE group_id = 2 AND users.pid NOT IN (SELECT ta_id FROM ta_section)", function(err, result) {
-            if(err) throw err;
+    getUnassignedTAs: function (cb) {
+        con.query("SELECT * FROM users WHERE group_id = 2 AND users.pid NOT IN (SELECT ta_id FROM ta_section)", function (err, result) {
+            if (err) throw err;
             console.log("Unassigned TAs", result);
             cb(result);
         })

@@ -21,7 +21,7 @@ module.exports = {
     },
 
     getOpenQuizes: function (user, cb) {
-        con.query("SELECT * FROM quiz INNER JOIN open_quiz ON quiz.quiz_id = open_quiz.quiz_id WHERE user_id = " + user, function (err, result) {
+        con.query("SELECT DISTINCT * FROM quiz INNER JOIN open_quiz ON quiz.quiz_id = open_quiz.quiz_id WHERE user_id = " + user, function (err, result) {
             if (err) throw err;
             cb(result);
         });
