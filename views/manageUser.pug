@@ -155,13 +155,13 @@ block content
                     userInfo[3] = $("#lastName").val();
                     userInfo[4] = $("#typeOfUser").val();
                     sectionID = $("#sectionSelection").val();
-
+                    console.log("added user");
 
                     $.post("/admin/addUser", {
                     newUser : userInfo,
                     sectionID : sectionID
                     }).done(function() {
-                        location.reload();
+                       location.reload();
                     });
 
                   });

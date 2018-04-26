@@ -147,13 +147,14 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                 req.body.newUser[0] = parseInt(req.body.newUser[0]);
                 req.body.newUser[4] = parseInt(req.body.newUser[4]);
                 console.log(req.body.newUser)
+
                 dbuser.insertUsers([req.body.newUser], () => {
                     console.log("new Manual User: " + req.body.newUser[1] + " Added to Users table")
                     var sectionAddArray = [];
 
                     sectionAddArray.push([parseInt(req.body.newUser[0]), parseInt(req.body.sectionID)]);
                     console.log(sectionAddArray);
-                    if (req.body.newUser[4]) {
+                    if (req.body.newUser[4] != 3) {
                         res.end();
                     } else {
                         dbuser.addStudentsToSection(sectionAddArray, () => {
