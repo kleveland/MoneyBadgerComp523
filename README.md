@@ -4,13 +4,13 @@ Initial Setup Instructions
 
 1.	Install nodejs. (https://nodejs.org/en/)
 
-2.	Clone project into working directory.
+2.	Clone project into a working directory.
 
 3.	Create a MySQL local server using MAMP or XAMP.
 
-4.	Import SQL file from repo into phpMyAdmin in a DB to replicate our DB.
+4.	Import SQL file (DataBaseImportFile.sql) from repo into phpMyAdmin in a DB to replicate our DB.
 
-5.	Go back to working directory with cloned project.
+5.	Go to current working directory.
 
 6.	Run the command “npm install” from the terminal to install all required dependencies.
 
