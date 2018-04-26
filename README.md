@@ -16,7 +16,7 @@ Initial Setup Instructions
 
 7.	Configer DB settings on serv.js file. There is a config variable that needs to be set accordingly with values of the DB you just created. 
 
-8.	You will be automatically logged in to an admin account. Please use the accounts in the users table in the DB to choose the account you want to use. To change to a particular account, keep a note of the PID. On the application, in the models folder open up dbuser.js using a text editor of your choice. Scroll to the bottom where the login function exists. Change the “req.headers.pid” variable to the value of the PID of the account you want to login to.
+8.	You will be automatically logged in to an admin account. Please use the users in the users table from the DB to choose the account you want to use. To change to a particular account, keep a note of the PID of the user. Then in the application, in the models folder, open up dbuser.js using a text editor of your choice. Scroll to the bottom to the login function. Change the “req.headers.pid” variable to the value of the PID of the user you want to login to.
 
 9.	Then run “node serv.js”. This will start the app. 
 
