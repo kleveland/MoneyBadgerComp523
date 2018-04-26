@@ -8,16 +8,17 @@ const express = require('express'),
     csv = require('fast-csv'),
     fs = require('fs');
 
+// dependency needed for csv upload.
 var upload = multer({storage: multer.memoryStorage()}).any();
 
-app.set('view engine', 'pug');
+app.set('view engine', 'pug'); // set view engine to PUG
 app.use(bodyparser.json()); // to support JSON-encoded bodies
 app.use(bodyparser.urlencoded({ // to support URL-encoded bodies
     extended: true
 }));
 
 app.use('/static', express.static(path.join(__dirname, 'public')))
-//app.use(express.static('./public'));
+
 app.use(session({
     secret: 'testsecrettestsecrettestsecret',
     cookie: {
@@ -27,7 +28,9 @@ app.use(session({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-/*
+
+
+// Info about loca DB connection
 let config = {
     ip: "localhost",
     port: 3000,
@@ -35,26 +38,12 @@ let config = {
         host: "localhost",
         user: "root",
         password: "root",
-        database: "comp523",
+        database: "523",
         port: "8889"
     }
 };
-*/
 
-
-let config = {
-    ip: "localhost",
-    port: 3000,
-    database: {
-        host: "localhost",
-        user: "root",
-        password: "",
-        database: "comp523",
-        port: "3306"
-    }
-};
-
-
+// DO NOT CHANGE!!!!
 config.port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 config.ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
@@ -68,7 +57,7 @@ if (process.env.OPENSHIFT_MYSQL_PASSWORD) {
 
 
 console.log(config);
-
+// Creating connection with DB
 var con = mysql.createConnection({
     host: config.database.host,
     user: config.database.user,
@@ -76,7 +65,7 @@ var con = mysql.createConnection({
     database: config.database.database,
     port: config.database.port
 });
-
+// TESTING DB connection
 con.query("SELECT * FROM questions", function (err, result, fields) {
     if (err) {
         console.log("Could not connect to host", config.database.host);
@@ -86,13 +75,13 @@ con.query("SELECT * FROM questions", function (err, result, fields) {
 
 let serv = app.listen(config.port, config.ip, () => console.log('Example app listening ' + config.ip + ':' + config.port + '!'))
 
+// Files from models. Functions for DB access and changes.
 const dbquiz = require('./models/dbquiz.js'),
       dbuser = require('./models/dbuser.js');
 dbuser.setCon(con);
 dbuser.setDbQuiz(dbquiz);
 dbquiz.setCon(con);
 
-
+// controller files.
 require('./controllers/main.js')(app, dbquiz, dbuser);
 require('./controllers/admin.js')(app, dbquiz, dbuser, upload, csv,fs);
-//console.log(questions.questlist[0].answer);
