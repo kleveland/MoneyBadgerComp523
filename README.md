@@ -14,7 +14,7 @@ Initial Setup Instructions
 
 6.	Run the command “npm install” from the terminal to install all required dependencies.
 
-7.	Configer DB settings on serv.js file. There is a config variable that needs to be set accordingly with values of the DB you just created. 
+7.	Configure pasDB settings on serv.js file. There is a config variable that needs to be set accordingly with values of the DB you just created. 
 
 8.	You will be automatically logged in to an admin account. Please use the users in the users table from the DB to choose the account you want to use. To change to a particular account, keep a note of the PID of the user. Then in the application, in the models folder, open up dbuser.js using a text editor of your choice. Scroll to the bottom to the login function. Change the “req.headers.pid” variable to the value of the PID of the user you want to login to.
 
