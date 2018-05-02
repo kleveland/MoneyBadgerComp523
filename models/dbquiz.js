@@ -154,7 +154,7 @@ module.exports = {
         }
         console.log(vals);
 
-        con.query("INSERT INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
+        con.query("INSERT IGNORE INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
             if (err) throw err;
             console.log("Opened Quiz!");
             cb();
