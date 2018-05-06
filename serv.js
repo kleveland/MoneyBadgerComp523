@@ -30,7 +30,7 @@ app.set('view engine', 'pug');
 
 
 
-// Info about loca DB connection
+// Info about local DB connection
 let config = {
     ip: "localhost",
     port: 3000,

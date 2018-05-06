@@ -155,7 +155,7 @@ module.exports = {
     },
     // Function inserts multiple new users into the DB.
     insertUsers: function (usersArray, cb) {
-        con.query('INSERT INTO users (pid, onyen, first_name, last_name, group_id) values ? ON DUPLICATE KEY UPDATE group_id=3', [usersArray], function (err, result) {
+        con.query('INSERT IGNORE INTO users (pid, onyen, first_name, last_name, group_id) values ?', [usersArray], function (err, result) {
             if (err) throw err;
             console.log("INSERT USERS", result);
             cb();
