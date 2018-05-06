@@ -27,9 +27,9 @@ block content
       button.btn.btn-primary.btn-success.float-right(type='submit' onClick="addQuiz()" id="publish") Save Quiz
       script.
             let questions = JSON.parse('!{editquiz.questions}');
+            let deleted_q = [];
             console.log(questions);
             drawQuestions();
-          $("#publish").prop("disabled", true);
 
           $(document).on("click","#choice-delete", function() {
               console.log("deleted choice");
@@ -70,7 +70,6 @@ block content
                       drawQuestions();
                       $(document).off("click","#savebut");
                       $("#editmodal").modal('hide');
-                      $("#publish").prop("disabled", false);
                  }else{
                       alert("Please select a correct answer.");
                  }
@@ -84,15 +83,30 @@ block content
           function drawQuestions() {
               console.log(questions);
               $(".question-list").empty();
+              let str = "";
               for(let i=0; i<questions.length; i++) {
-                  $(".question-list").append('<div class="card my-3" class="question-entry" id=""' + i + '><div class="card-header">Question ' + (i+1) + '</div><div class="card-body" id="bod'+ i +'"></div><div class="card-footer"><button onClick="editQuestion('+ i +')" class="btn btn-primary quest-but">Edit Question</button><button onClick="deleteQuestion('+ i +')" class="btn btn-danger quest-but">Delete Question</button></div></div>');
+                  if(questions[i].id){
+                    str = '<div class="card my-3" class="question-entry" id="' + questions[i].id + '">';
+                  } else {
+                    str = '<div class="card my-3" class="question-entry">';
+                  }
+                  $(".question-list").append(str + '<div class="card-header" id='+ i +'>Question ' + (i+1) + '</div><div class="card-body" id="bod'+ i +'"></div><div class="card-footer"><button onClick="editQuestion('+ i +')" class="btn btn-primary quest-but">Edit Question</button><button onClick="deleteQuestion('+ i +')" class="btn btn-danger quest-but">Delete Question</button></div></div>');
                   $("#bod"+i).append(questions[i].question_html);
                   $("#bod"+i).append('<div class="answers"></div>');
                   for(let j=0; j<questions[i].answers.length; j++) {
+                      if(questions[i].answers[j].id && questions[i].answers[j].correct) {
+                        str = '<div class="anschoice correct" id=' + questions[i].answers[j].id + '>';
+                      } else if(questions[i].answers[j].correct) {
+                        str = '<div class="anschoice correct">'
+                      } else if(questions[i].answers[j].id) {
+                        str = '<div class="anschoice" id=' + questions[i].answers[j].id + '>';
+                      }else {
+                        str = '<div class="anschoice">';
+                      }
                       if(questions[i].answers[j].correct) {
-                          $("#bod"+i+" .answers").append('<div class="anschoice correct">' + questions[i].answers[j].text + '</div>');
+                          $("#bod"+i+" .answers").append(str + questions[i].answers[j].text + '</div>');
                       } else {
-                          $("#bod"+i+" .answers").append('<div class="anschoice">' + questions[i].answers[j].text + '</div>');
+                          $("#bod"+i+" .answers").append(str + questions[i].answers[j].text + '</div>');
                       }
                   }
               }
@@ -100,6 +114,9 @@ block content
 
           function deleteQuestion(id) {
               questions.splice(id, 1);
+                if($("#bod"+id).parent().attr("id")) {
+                    deleted_q.push($("#bod"+id).parent().attr("id"));
+                }
               drawQuestions();
               console.log(questions.length);
               if(questions.length == 0) {
@@ -114,8 +131,14 @@ block content
               $("#editor").trumbowyg();
               $("#editor").trumbowyg("html",questions[id].question_html);
               $(".modal-body").append('<button type="button" class="btn btn-primary" id="addchoice">Add Choice</button>')
+              let str = "";
               for(let i=0; i<questions[id].answers.length; i++) {
-                  $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span> </div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input type="text" value="' + questions[id].answers[i].text + '" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
+                if(questions[id].answers[i].id) {
+                    str = 'id="' + questions[id].answers[i].id + '"';
+                } else {
+                    str = '';
+                }
+                  $(".modal-body").append('<div class="input-group mb-3"> <div class="input-group-prepend" id="choice-delete"><span class="input-group-text" id="inputGroup-sizing-default">X</span> </div><div class="input-group-append"><span class="input-group-text" id="inputGroup-sizing-default"><input name="questans" class="anscorrect" type="radio"></span></div> <input ' + str + ' type="text" value="' + questions[id].answers[i].text + '" class="choice-entry form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"> </div>');
               }
               $(".anscorrect").each(function(index, el) {
                   $(this).prop("checked", questions[id].answers[index].correct);
@@ -128,7 +151,12 @@ block content
               $(document).on("click","#savebut",function() {
                   let answers = [];
                   $(".choice-entry").each(function(index, el) {
-                      answers.push({text: $(this).val(), correct: false });
+                    console.log($(this).val(), $(this).attr("id"));
+                    if($(this).attr("id")) {
+                        answers.push({id: $(this).attr("id"), text: $(this).val(), correct: false });
+                    } else {
+                        answers.push({text: $(this).val(), correct: false });
+                    }
                   })
                   $(".anscorrect").each(function(index, el) {
                       answers[index].correct = $(this).prop("checked");
@@ -136,6 +164,9 @@ block content
                   console.log($("#editor").trumbowyg("html"));
                   console.log(answers);
                   questions[id] = {question_html: $("#editor").trumbowyg("html"), answers: answers };
+                  if($("#bod"+id).parent().attr("id")) {
+                    questions[id].id = $("#bod"+id).parent().attr("id");
+                  }
                   drawQuestions();
                   $(document).off("click","#savebut");
                   $("#editmodal").modal('hide');
@@ -146,14 +177,17 @@ block content
         function addQuiz() {
             let dat = {};
             dat.name = $("#quizName").val();
-
+            console.log(deleted_q);
+            dat.deleted = deleted_q;
             dat.questions = questions;
+            dat.id = "#{editquiz.quiz_id}";
             console.log(dat);
-            let posting = $.post('/admin/addQuiz', dat);
+            let posting = $.post('/admin/saveQuiz', dat);
             posting.done(function(data) {
                 console.log("Success!");
-                $(".quizCreate").prepend('<div class="alert alert-success alert-dismissible fade show fixed-alert" role="alert"> <strong>Success!</strong> Your quiz was successfully created. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>')
+                $(".quizCreate").prepend('<div class="alert alert-success alert-dismissible fade show fixed-alert" role="alert"> <strong>Success!</strong> Your quiz was successfully saved. <button type="button" class="close" data-dismiss="alert" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>')
                 questions = [];
+                deleted_q = [];
                 drawQuestions();
                 $("#quizName").val('');
             })

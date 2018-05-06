@@ -109,6 +109,121 @@ module.exports = {
         });
     },
 
+    saveQuiz: function (id, name, questions, deleted, cb) {
+        con.query('UPDATE quiz SET quiz_name = "' + name + '", creation_date=NOW() WHERE quiz_id = ' + id, function (err, result) {
+            if (err) throw err;
+            let del = [];
+            for (let i = 0; i < deleted.length; i++) {
+                del.push([deleted[i]]);
+            }
+            console.log("questions", del);
+            con.query('DELETE FROM questions WHERE question_id = ?', [del], function (err, result) {
+                if(del.length != 0) {
+                    if (err) throw err;
+                }
+                console.log("Deleted questions.");
+                let updateq = [];
+                let updatea = [];
+                let newq = [];
+                let newa = [];
+                /*for (let i = 0; i < questions.length; i++) {
+                    if (questions[i].id) {
+                        updateq.push(questions[i]);
+                    } else {
+                        newq.push(questions[i]);
+                    }
+                }*/
+                console.log(updateq);
+                console.log(updatea);
+                console.log(newq);
+                console.log(newa);
+                let updateqstr = '';
+                let updateastr = '';
+                let newqstr = '';
+                let newastr = '';
+                for (let i = 0; i < questions.length; i++) {
+                    if(questions[i].id) {
+                        (function() {
+                            con.query('UPDATE questions SET question = "' + questions[i].question_html + '",quiz_id = ' + id + ' WHERE question_id = ' + questions[i].id, function(err, result) {
+                                if(err) throw err;
+                                console.log("RESULT", i, result);
+                                for(let j=0; j<questions[i].answers.length; j++) {
+                                    if(questions[i].answers[j].id) {
+                                        (function() {
+                                            let cor = 0;
+                                            if(questions[i].answers[j].correct) {
+                                                cor = 1;
+                                            } else {
+                                                cor = 0;
+                                            }
+                                            con.query('UPDATE answers SET answer = "' + questions[i].answers[j].text + '", correct_answer = '+ cor + ' WHERE answer_id = ' + questions[i].answers[j].id, function(err, result) {
+                                                if(err) throw err;
+                                                //WIP
+                                            })
+                                        })();
+                                    }
+                                }
+                            })
+                        })();
+                    } else {
+                        (function() {
+                            con.query('INSERT INTO questions (question,quiz_id) VALUES ("' + questions[i].question_html + '",' + id + ')', function(err, result) {
+                                if(err) throw err;
+                                console.log("RESULT2", i, result);
+                                for(let j=0; j<questions[i].answers.length; j++) {
+
+                                }
+                            })
+                        })();
+                    }
+                }
+                con.query(updateqstr, function (err, result) {
+                    if (err) throw err;
+                    console.log("Updated questions.");
+                    let correct = 0;
+                    for (let i = 0; i < updatea.length; i++) {
+                        if (updatea[i].correct) {
+                            correct = 1;
+                        } else {
+                            correct = 0;
+                        }
+                        updateastr += 'UPDATE answers SET text = "' + updatea[i].text + '", correct_answer = ' + correct + ' WHERE question_id = ' + updatea[i].id + ';';
+                    }
+                    con.query(updateastr, function (err, result) {
+                        if (err) throw err;
+                        console.log("Updated answers.");
+                        for (let i = 0; i < newq.length; i++) {
+                            (function () {
+                                con.query('INSERT INTO questions (question, quiz_id) VALUES ("' + newq[i].question_html + '", ' + id + ');', function (err, result) {
+                                    if (err) throw err;
+                                    let correctans = 0;
+                                    for (let j = 0; j < newq[i].answers.length; j++) {
+                                        if (newq[i].answers[j].correct) {
+                                            correctans = 1;
+                                        } else {
+                                            correctans = 0;
+                                        }
+                                        con.query('INSERT INTO answers (answer, correct_answer, question_id) VALUES (?)', [newq[i].answers[j].text, correctans, result.insertId], function (err, result) {
+                                            if (err) throw err;
+
+                                        })
+                                    }
+                                });
+                            })();
+                        }
+
+                    });
+                })
+            })
+
+            let quest = [];
+            for (let i = 0; i < questions.length; i++) {
+                quest.push()
+            }
+            cb(result.insertId);
+        })
+    },
+
     postQuiz: function (name, questions, cb) {
         let quizdat = [
             [name]
@@ -198,7 +313,10 @@ module.exports = {
                     //console.log("i:",i,"j",j,"pid",result[i].pid);
                     if (grades[j].quiz_id == result[i].quiz_id) {
                         //console.log("PUSH1", result[i].quiz_id);
-                        grades[j].grades.push({score: result[i].score, pid: result[i].pid});
+                        grades[j].grades.push({
+                            score: result[i].score,
+                            pid: result[i].pid
+                        });
                         if (grades[j].total < result[i].total) {
                             grades[j].total = result[i].total;
                         }
@@ -212,7 +330,10 @@ module.exports = {
                             grades: []
                         });
                         //console.log("PUSH2", result[i].quiz_id);
-                        grades[grades.length - 1].grades.push({score: result[i].score, pid: result[i].pid})
+                        grades[grades.length - 1].grades.push({
+                            score: result[i].score,
+                            pid: result[i].pid
+                        })
                         break;
                     }
                 }
@@ -224,7 +345,10 @@ module.exports = {
                         grades: []
                     });
                     //console.log("PUSH3", result[i].quiz_id);
-                    grades[grades.length - 1].grades.push({score: result[i].score, pid: result[i].pid});
+                    grades[grades.length - 1].grades.push({
+                        score: result[i].score,
+                        pid: result[i].pid
+                    });
                 }
                 for (let j = 0; j < students.length; j++) {
                     if (students[j].pid == result[i].pid) {

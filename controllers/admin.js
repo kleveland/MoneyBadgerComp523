@@ -18,9 +18,27 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
 
     app.post('/admin/addQuiz', (req, res) => {
         dbuser.login(req, (user) => {
-
             dbuser.verifyAdmin(req, res, (adm) => {
                 dbquiz.postQuiz(req.body.name, req.body.questions, (quizid) => {
+                    console.log("Quiz ID", quizid);
+                    res.sendStatus(200);
+                });
+            })
+        });
+    });
+
+    app.post('/admin/saveQuiz', (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                console.log("VAR")
+                console.log(req.body.id);
+                console.log(req.body.name);
+                console.log(req.body.questions);
+                console.log(req.body.deleted);
+                if(!req.body.deleted) {
+                    req.body.deleted = [];
+                }
+                dbquiz.saveQuiz(req.body.id, req.body.name, req.body.questions, req.body.deleted, (quizid) => {
                     console.log("Quiz ID", quizid);
                     res.sendStatus(200);
                 });
@@ -45,13 +63,17 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
     app.get('/admin/manageQuiz/:id', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
-                dbquiz.getQuiz(req.params.id, (quiz) => {
+                dbquiz.getQuiz(req.params.id, (quiz,ans) => {
                     dbquiz.getQuizAnswers(req.params.id, (answers) => {
+                        console.log("RECIVED QUIZ");
+                        console.log(quiz);
+                        console.log(ans);
                         let qlist = quiz.questlist;
                         let correct = false;
                         let questions = [];
                         for (let i = 0; i < qlist.length; i++) {
                             questions.push({
+                                id: qlist[i].id,
                                 question_html: qlist[i].question
                             });
                             for (let j = 0; j < qlist[i].answers.length; j++) {
@@ -64,14 +86,17 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                                     correct = false;
                                 }
                                 questions[questions.length - 1].answers.push({
+                                    id: qlist[i].answers[j].ans_id,
                                     text: qlist[i].answers[j].text,
                                     correct: correct
                                 });
                             }
                         }
-                        console.log(questions);
                         req.session.dat.editquiz = quiz;
                         req.session.dat.editquiz.questions = JSON.stringify(questions);
+
+                        console.log("QUIZ");
+                        console.log(req.session.dat.editquiz);
                         console.log(quiz);
                         res.render("manageQuiz", req.session.dat);
                         req.session.dat.editquiz = null;
