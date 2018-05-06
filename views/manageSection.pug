@@ -31,6 +31,7 @@ block content
                         div.card
                             div(class="secHeader" id=val.id).card_header
                                 h5.mb-0.sec-accordion
+                                    a(class="deleteSec" style="color: white;" id=val.id).btn.btn-primary Delete Section
                                     button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name
                                     div.dropdown.inline-dropdown
                                         button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
@@ -46,39 +47,42 @@ block content
                                                 a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                             div(id="sec"+val.id aria-labelledby="sec"+val.id).collapse
                                 div.card-body
-                                    table.table.table-hover
-                                        thead
-                                            tr
-                                                th(scope="col") #
-                                                th(scope="col") Name
-                                                th(scope="col")
-                                        tbody
-                                            each val2, index2 in val.students
-                                                tr(id=val2.pid)
-                                                    th(scope="row")=(index2+1)
-                                                    td=val2.name
-                                                    td
-                                                        div(class="dropdown")
-                                                            button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
-                                                            div(id=val2.pid).dropdown-menu
-                                                                each val3 in sections
-                                                                    a(href="#" class="sec" id=val3.id).dropdown-item=val3.section_name
-                                                            script(type='text/javascript').
-                                                                $(".sec").unbind().click(function() {
-                                                                    console.log("section clicked");
-                                                                    let dat = {
-                                                                        pid: $(this).parent().attr("id"),
-                                                                        section: $(this).attr("id")
-                                                                    }
-                                                                    let el = $(this).parent().parent().parent().parent();
-                                                                    let elAppend = $("#sec" + dat.section + " tbody");
-                                                                    console.log(elAppend);
-                                                                    console.log(dat);
-                                                                    $.post("/admin/updateSec", dat).done(function(val) {
-                                                                        console.log("Posting done.");
-                                                                        el.appendTo(elAppend);
-                                                                    });
-                                                                })
+                                    if val.students.length == 1 && val.students[0].name == "null null"
+                                        h3 There are no students in this section yet!
+                                    else
+                                        table.table.table-hover
+                                            thead
+                                                tr
+                                                    th(scope="col") #
+                                                    th(scope="col") Name
+                                                    th(scope="col")
+                                            tbody
+                                                each val2, index2 in val.students
+                                                    tr(id=val2.pid)
+                                                        th(scope="row")=(index2+1)
+                                                        td=val2.name
+                                                        td
+                                                            div(class="dropdown")
+                                                                button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
+                                                                div(id=val2.pid).dropdown-menu
+                                                                    each val3 in sections
+                                                                        a(href="#" class="sec" id=val3.id).dropdown-item=val3.section_name
+                                                                script(type='text/javascript').
+                                                                    $(".sec").unbind().click(function() {
+                                                                        console.log("section clicked");
+                                                                        let dat = {
+                                                                            pid: $(this).parent().attr("id"),
+                                                                            section: $(this).attr("id")
+                                                                        }
+                                                                        let el = $(this).parent().parent().parent().parent();
+                                                                        let elAppend = $("#sec" + dat.section + " tbody");
+                                                                        console.log(elAppend);
+                                                                        console.log(dat);
+                                                                        $.post("/admin/updateSec", dat).done(function(val) {
+                                                                            console.log("Posting done.");
+                                                                            el.appendTo(elAppend);
+                                                                        });
+                                                                    })
     script(type='text/javascript').
         $(document).ready(function() {
 
@@ -131,6 +135,21 @@ block content
                     console.log("Success Open");
                 });
             })
+
+            $(document).on("click", ".deleteSec", function() {
+                console.log("Delete section", $(this).attr("id"));
+                let el = $(this);
+                let secid = $(this).attr("id");
+                console.log(secid);
+                $.post("/admin/deleteSection", {
+                    id: secid
+                }).done(function() {
+                    alert("Section Deleted.");
+                    location.reload(true);
+                    console.log("Success Close");
+                });
+            })
+
             $(document).on("click", ".closequiz", function() {
                 console.log("Open quiz", $(this).attr("id"));
                 let el = $(this);

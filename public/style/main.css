@@ -2,6 +2,10 @@ body {
 
 }
 
+.noWrap {
+  white-space: nowrap;
+  overflow: hidden;
+}
 .onyen {
     margin-right: 1em;
 }

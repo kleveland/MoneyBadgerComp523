@@ -3,7 +3,7 @@ module.exports = function (app, dbquiz, dbuser) {
     app.get('/', (req, res) => {
         dbuser.login(req, (user) => {
             console.log("USER", user);
-            dbquiz.getOpenQuizes(req.session.dat.user.pid, (quizes) => {
+            dbquiz.getOpenQuizes(req.session.dat.user.pid, req.session.dat.user.is_admin, (quizes) => {
                 req.session.dat.quizes = quizes;
                 var availableQuizzes = [];
                 res.render('quizHome', req.session.dat);
@@ -31,7 +31,7 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.get('/quiz/:id', (req, res) => {
         dbuser.login(req, (user) => {
-            dbquiz.verifyQuizAccess(req.params.id, user.pid, (access) => {
+            dbquiz.verifyQuizAccess(req.params.id, user.pid, req.session.dat.user.is_admin, (access) => {
                 if (access) {
                     dbquiz.getQuiz(req.params.id, (result, answers) => {
                         req.session.dat.questions = result;
@@ -75,7 +75,7 @@ module.exports = function (app, dbquiz, dbuser) {
 
     app.post('/submit/quiz', (req, res) => {
         dbuser.login(req, (user) => {
-            dbquiz.verifyQuizAccess(req.session.dat.questions.quiz_id, user.pid, (access) => {
+            dbquiz.verifyQuizAccess(req.session.dat.questions.quiz_id, user.pid, req.session.dat.user.is_admin, (access) => {
                 if (access) {
                     console.log("RECIEVED ANSWER", req.body);
                     console.log('Finished recording submission.');

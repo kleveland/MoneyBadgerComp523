@@ -12,7 +12,7 @@ module.exports = {
 
     // function gets all users
     getUsers: function (cb) {
-        con.query('SELECT * FROM users LEFT JOIN groups ON users.group_id = groups.group_id LEFT JOIN user_section ON users.pid = user_section.pid INNER JOIN section ON user_section.section_id = section.id', function (err, result) {
+        con.query('SELECT users.pid AS pid, users.onyen AS onyen, users.first_name AS first_name, users.last_name AS last_name, users.group_id AS group_id, groups.is_admin AS is_admin, user_section.section_id AS section_id, section.name AS name, groups.type AS type FROM users LEFT JOIN groups ON users.group_id = groups.group_id LEFT JOIN user_section ON users.pid = user_section.pid LEFT JOIN section ON user_section.section_id = section.id', function (err, result) {
             if (err) throw err;
 
             console.log("Get Users:")
@@ -72,7 +72,7 @@ module.exports = {
     },
 
     getSections: function (cb) {
-        con.query('SELECT t1.id, t1.first_name, t1.last_name, t1.onyen, t1.pid, t1.name, t2.first_name AS ta_first, t2.last_name AS ta_last, t2.pid AS ta_pid  FROM (SELECT id, first_name, last_name, onyen, users.pid, name, ta_id FROM section INNER JOIN user_section ON section.id = user_section.section_id INNER JOIN ta_section ON section.id = ta_section.section_id INNER JOIN users ON users.pid = user_section.pid) AS t1 INNER JOIN users t2 ON t1.ta_id = t2.pid', function (err, result) {
+        con.query('SELECT t1.id, t1.first_name, t1.last_name, t1.onyen, t1.pid, t1.name, t2.first_name AS ta_first, t2.last_name AS ta_last, t2.pid AS ta_pid FROM (SELECT id, first_name, last_name, onyen, users.pid, name, ta_id FROM section LEFT JOIN user_section ON section.id = user_section.section_id LEFT JOIN ta_section ON section.id = ta_section.section_id LEFT JOIN users ON users.pid = user_section.pid) AS t1 LEFT JOIN users t2 ON t1.ta_id = t2.pid', function (err, result) {
             if (err) throw err;
             console.log("test3-----------------");
             console.log(result[0]);
@@ -150,7 +150,16 @@ module.exports = {
     // Function changes a users section in user_section table.
     updateSection: function (pid, section, cb) {
         con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function (err, result) {
-            cb("OK");
+            if(err) throw err;
+            console.log(result.affectedRows, "ROWS");
+            if(result.affectedRows == 0) {
+                con.query('INSERT INTO user_section (pid, section_id) VALUES ('+pid+','+section+')',function(err, result) {
+                    if(err)throw err;
+                    cb("OK2");
+                })
+            } else {
+                cb("OK");
+            }
         })
     },
     // Function inserts multiple new users into the DB.
@@ -168,6 +177,20 @@ module.exports = {
             if (err) throw err;
             cb();
         })
+    },
+    // Function deletes section and user and TA ties to said section.
+    deleteSection: function(id, cb) {
+        con.query("DELETE FROM section WHERE id = " + id, function(err, result) {
+            if(err) throw err;
+            cb();
+        })
+    },
+    //Resets quiz submissions for specified user.
+    quizReset: function(id, usersArray, cb) {
+      con.query('DELETE FROM quiz_submission WHERE (pid) IN (?) AND quiz_id = ' + id, [usersArray], function(err, result) {
+         if(err) throw err;
+          cb();
+      });
     },
     // Function takes current Admin's info and creates a section. This function is for CSV upload of a section.
     createSection: function (taPID, sectionName, cb) {
@@ -225,7 +248,7 @@ module.exports = {
         if (!req.session.dat) {
             req.session.dat = {};
             // current default user, on local.
-            req.headers.pid = "720462663";
+            //req.headers.pid = "720462663";
             //req.headers.pid = "237";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;

@@ -20,12 +20,12 @@ block content
                     tbody
                         each val, index in quizes
                             tr
-                                th(scope="row").align-middle
+                                th(scope="row").align-middle.noWrap
                                     input(type="checkbox" id=val.quiz_id class = "quizSelection")
                                     label(class="form-check-label" style="margin-left: 1em;" for=val.quiz_id)=(index+1)
                                 td.align-middle=val.quiz_name
                                 td.align-middle
-                                    button(class="editquiz" id=val.quiz_id type="button").btn.btn-primary Edit
+                                    a(class="editquiz" id=val.quiz_id href="./manageQuiz/" + val.quiz_id).btn.btn-primary Edit
     script.
         $(document).ready(function() {
             $(".deleteQuizesButton").click(function() {

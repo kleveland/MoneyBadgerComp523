@@ -37,7 +37,13 @@ block content
             nav.navbar.navbar-light.bg-light.admin-navbar
                 form.form-inline
                     button(type="button" class="addUsersButton").btn.btn-success.button-left Add user
-                    button(type="button" class="deleteUsersButton").btn.btn-danger.button-left Delete Selected Users
+                    button(type="button" class="deleteUsersButton").btn.btn-danger.button-left Delete Users
+                    div.dropdown
+                        button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle.button-left Reset Submission
+                            div.dropdown-menu
+                                h6.dropdown-header Click to Reset Submission
+                                    each val, index in quizes
+                                        a(href="#" class="quizReset" id=val.quiz_id).dropdown-item=val.quiz_name
             div.row
                 div.col.mx-1
                   form.deletingUser
@@ -45,15 +51,15 @@ block content
                           thead
                               tr
                                   th(scope="col") #
-                                  th(scope="col") Name
+                                  th(scope="col").noWrap Name
                                     span(class="fa fa-sort")
-                                  th(scope="col") Onyen
+                                  th(scope="col").noWrap Onyen
                                     span(class="fa fa-sort")
-                                  th(scope="col") PID
+                                  th(scope="col").noWrap PID
                                     span(class="fa fa-sort")
-                                  th(scope="col") Group
+                                  th(scope="col").noWrap Group
                                     span(class="fa fa-sort")
-                                  th(scope="col") Section
+                                  th(scope="col").noWrap Section
                                     span(class="fa fa-sort")
                                   th(scope="col") Change Section
                                   th(scope="col") Closed Quizzes
@@ -62,7 +68,7 @@ block content
                           tbody
                               each val, index in users
                                   tr
-                                      th(scope="row").align-middle
+                                      th(scope="row").noWrap.align-middle
                                         input(type="checkbox" id=val.pid class="userSelection")
                                         label(class="form-check-label" style="margin-left: 1em;" for=val.quiz_id)=(index+1)
                                       td.align-middle=val.first_name + " " + val.last_name
@@ -71,33 +77,35 @@ block content
                                       td.align-middle=val.type
                                       td(id="secName").align-middle=val.name
                                       td.align-middle
-                                          div.dropdown
-                                              button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
-                                              div.dropdown-menu(id=val.pid)
-                                                  h6.dropdown-header Click to Change Section
-                                                  each val, index in sections
-                                                      a(href="#" class="sec" id=val.id).dropdown-item=val.name
-                                                  script(type='text/javascript').
-                                                      $(".sec").unbind().click(function() {
-                                                          console.log("section clicked");
-                                                          let dat = {
-                                                              pid: $(this).parent().attr("id"),
-                                                              section: $(this).attr("id")
-                                                          }
-                                                          let setVal = $(this).text();
-                                                          let changeVal = $(this).parent().parent().parent().siblings("#secName");
-                                                          console.log(dat);
-                                                          console.log(changeVal);
-                                                          $.post("/admin/updateSec", dat).done(function(val) {
-                                                              console.log("Posting done.");
-                                                              changeVal.html(setVal);
-                                                              $("#userTable").trigger("updateCell",[changeVal[0], true, () => {
-                                                                  console.log("updated cell.");
-                                                              }]);
-                                                          });
-                                                      })
+                                          if val.type == "Student"
+                                              div.dropdown
+                                                  button(type="button" data-toggle="dropdown").btn.btn-primary.dropdown-toggle Change Section
+                                                  div.dropdown-menu(id=val.pid)
+                                                      h6.dropdown-header Click to Change Section
+                                                      each val, index in sections
+                                                          a(href="#" class="sec" id=val.id).dropdown-item=val.name
+                                                      script(type='text/javascript').
+                                                          $(".sec").unbind().click(function() {
+                                                              console.log("section clicked");
+                                                              let dat = {
+                                                                  pid: $(this).parent().attr("id"),
+                                                                  section: $(this).attr("id")
+                                                              }
+                                                              let setVal = $(this).text();
+                                                              let changeVal = $(this).parent().parent().parent().siblings("#secName");
+                                                              console.log(dat);
+                                                              console.log(changeVal);
+                                                              $.post("/admin/updateSec", dat).done(function(val) {
+                                                                  console.log("Posting done.");
+                                                                  changeVal.html(setVal);
+                                                                  $("#userTable").trigger("updateCell",[changeVal[0], true, () => {
+                                                                      console.log("updated cell.");
+                                                                  }]);
+                                                              });
+                                                          })
                                       - let quiz_arr = val.closed_quiz
                                       td.align-middle
+                                        if val.type == "Student"
                                           div.dropdown
                                               button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
                                               div.dropdown-menu.open_quiz_but
@@ -109,6 +117,7 @@ block content
                                                       a(href="#").dropdown-item No Closed Quizzes
                                       - quiz_arr = val.open_quiz
                                       td.align-middle
+                                        if val.type == "Student"
                                           div.dropdown
                                               button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
                                               div.dropdown-menu.close_quiz_but
@@ -143,6 +152,23 @@ block content
                         $.post("/admin/deleteUser", {
                         checkedUsers : checkedUsers
                         }).done(function() {
+                            alert("Deletion of users successful.");
+                            location.reload(true);
+                        });
+                    });
+                    $(".quizReset").click(function(){
+                        console.log("clicked reset");
+                        let butVal = this;
+                      $(".userSelection:checked").each(function(index, el) {
+                        //console.log($(el).attr("id"));
+                        checkedUsers.push($(el).attr("id"));
+                        });
+                        console.log(checkedUsers);
+                        $.post("/admin/quizReset", {
+                        id : $(butVal).attr('id'),
+                        checkedUsers : checkedUsers
+                        }).done(function() {
+                            alert("Quiz reset successful.");
                             location.reload(true);
                         });
                     });

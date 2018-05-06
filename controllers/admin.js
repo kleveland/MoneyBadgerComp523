@@ -35,7 +35,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                 console.log(req.body.name);
                 console.log(req.body.questions);
                 console.log(req.body.deleted);
-                if(!req.body.deleted) {
+                if (!req.body.deleted) {
                     req.body.deleted = [];
                 }
                 dbquiz.saveQuiz(req.body.id, req.body.name, req.body.questions, req.body.deleted, (quizid) => {
@@ -63,7 +63,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
     app.get('/admin/manageQuiz/:id', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
-                dbquiz.getQuiz(req.params.id, (quiz,ans) => {
+                dbquiz.getQuiz(req.params.id, (quiz, ans) => {
                     dbquiz.getQuizAnswers(req.params.id, (answers) => {
                         console.log("RECIVED QUIZ");
                         console.log(quiz);
@@ -74,7 +74,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                         for (let i = 0; i < qlist.length; i++) {
                             questions.push({
                                 id: qlist[i].id,
-                                question_html: qlist[i].question
+                                question_html: qlist[i].question.replace(/"/g, '\\"')
                             });
                             for (let j = 0; j < qlist[i].answers.length; j++) {
                                 if (!questions[questions.length - 1].answers) {
@@ -87,7 +87,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                                 }
                                 questions[questions.length - 1].answers.push({
                                     id: qlist[i].answers[j].ans_id,
-                                    text: qlist[i].answers[j].text,
+                                    text: qlist[i].answers[j].text.replace(/"/g, '\\"'),
                                     correct: correct
                                 });
                             }
@@ -113,11 +113,16 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                     console.log("Test here");
                     console.log(req.session.dat);
                     req.session.dat.users = users;
-                    dbuser.getOnlySections((sections) => {
-                        req.session.dat.sections = sections;
-                        res.render('manageUser', req.session.dat);
-                        req.session.dat.sections = null;
-                        req.session.dat.users = null;
+                    dbquiz.getQuizes((quizes) => {
+                        req.session.dat.quizes = quizes;
+                        console.log("QUIZ", quizes);
+                        dbuser.getOnlySections((sections) => {
+                            req.session.dat.sections = sections;
+                            res.render('manageUser', req.session.dat);
+                            req.session.dat.sections = null;
+                            req.session.dat.quizes = null;
+                            req.session.dat.users = null;
+                        })
                     })
                 })
             })
@@ -147,6 +152,8 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
 
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
+                console.log("PID:", req.body.pid);
+                console.log("SECTION:", req.body.section);
                 dbuser.updateSection(req.body.pid, req.body.section, (dat) => {
                     console.log("Quiz ID", dat);
                     res.sendStatus(200);
@@ -204,6 +211,30 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                 });
             });
         });
+    })
+
+    app.post("/admin/quizReset", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                //code for getting data from front end and putting it into correct type list
+                //then send to deleteUser function on dbuser
+                console.log(req.body.checkedUsers);
+                dbuser.quizReset(req.body.id, req.body.checkedUsers, () => {
+                    res.end();
+                });
+            });
+        });
+    })
+
+    app.post("/admin/deleteSection", (req, res) => {
+        dbuser.login(req, (user) => {
+            dbuser.verifyAdmin(req, res, (adm) => {
+                dbuser.deleteSection(req.body.id, () => {
+                    res.end();
+                });
+            });
+        });
+
     })
 
     app.post("/admin/closequiz", (req, res) => {
@@ -320,28 +351,32 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                                 dbuser.createSection(taPID, fileName, (sectionID) => {
                                     console.log("done with section creation");
 
-                                    //adding users to DB
-                                    console.log(newUsers);
-                                    var studentEntryArray = [];
-                                    var sectionEntryArray = [];
-                                    for (i = 0; i < newUsers.length; i++) {
-                                        name = newUsers[i]["Student Name"].split(",");
-                                        studentEntryArray.push([parseInt(newUsers[i]["PID"]), newUsers[i]["Student ID"], name[1], name[0], 3])
-                                        sectionEntryArray.push([parseInt(newUsers[i]["PID"]), sectionID]);
+                                    if (newUsers.length != 0) {
+                                        //adding users to DB
+                                        console.log(newUsers);
+                                        var studentEntryArray = [];
+                                        var sectionEntryArray = [];
+                                        for (i = 0; i < newUsers.length; i++) {
+                                            name = newUsers[i]["Student Name"].split(",");
+                                            studentEntryArray.push([parseInt(newUsers[i]["PID"]), newUsers[i]["Student ID"], name[1], name[0], 3])
+                                            sectionEntryArray.push([parseInt(newUsers[i]["PID"]), sectionID]);
+                                        }
+                                        console.log(studentEntryArray);
+                                        console.log("admin.js Section ID");
+                                        console.log(sectionID);
+
+
+                                        dbuser.insertUsers(studentEntryArray, () => {
+                                            console.log("Students added to DB");
+                                            dbuser.addStudentsToSection(sectionEntryArray, () => {
+                                                console.log("Students added to section in DB");
+                                                res.end();
+                                            })
+
+                                        });
+                                    } else {
+                                        res.end();
                                     }
-                                    console.log(studentEntryArray);
-                                    console.log("admin.js Section ID");
-                                    console.log(sectionID);
-
-
-                                    dbuser.insertUsers(studentEntryArray, () => {
-                                        console.log("Students added to DB");
-                                        dbuser.addStudentsToSection(sectionEntryArray, () => {
-                                            console.log("Students added to section in DB");
-                                            res.end();
-                                        })
-
-                                    });
                                 })
 
                             });
