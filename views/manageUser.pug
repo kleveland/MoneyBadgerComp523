@@ -206,9 +206,7 @@ block content
                             quiz_id: $(this).attr("id")
                         }).done(function() {
                             console.log("Success Open");
-                            el.removeClass("openquiz");
-                            el.addClass("closequiz");
-                            el.appendTo(".close_quiz_but");
+                            location.reload(true);
                         });
                     })
                     $(document).on("click", ".closequiz", function() {
@@ -219,9 +217,10 @@ block content
                             quiz_id: $(this).attr("id")
                         }).done(function() {
                             console.log("Success Close");
-                            el.removeClass("closequiz");
-                            el.addClass("openquiz");
-                            el.appendTo(".open_quiz_but");
+                            location.reload(true);
+                            //el.removeClass("closequiz");
+                            //el.addClass("openquiz");
+                            //el.appendTo(".open_quiz_but");
                         });
                     })
                 });

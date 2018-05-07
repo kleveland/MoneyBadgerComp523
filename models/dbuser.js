@@ -23,42 +23,75 @@ module.exports = {
             }
             con.query('SELECT * FROM open_quiz INNER JOIN quiz ON open_quiz.quiz_id = quiz.quiz_id', function (err, result2) {
                 if (err) throw err;
-                //console.log("Get Open Quiz:")
-                //console.log(result2);
-                dbquiz.getQuizes((quizes) => {
-                    for (let i = 0; i < result2.length; i++) {
-                        for (let j = 0; j < result.length; j++) {
-                            if (result2[i].user_id == result[j].pid) {
-                                result[j].open_quiz.push(result2[i]);
-                                break;
-                            }
+                con.query('SELECT * FROM quiz', function (err, result3) {
+                    if (err) throw err;
+                    //console.log("Get Open Quiz:")
+                    //console.log(result2);
+                    /*for(let i=0; i<result.length; i++) {
+                        for(let j=0; j<result3.length; j++) {
+                            result[i].closed_quiz[j] = result3[j];
                         }
-                    }
-                    let pushQuiz = true;
-                    for (let i = 0; i < result.length; i++) {
-                        for (let j = 0; j < result[i].open_quiz.length; j++) {
-                            for (let k = 0; k < quizes.length; k++) {
-                                if (result[i].open_quiz[j].quiz_id != quizes[k].quiz_id) {
-                                    for (let t = 0; t < result[i].closed_quiz.length; t++) {
-                                        if (result[i].closed_quiz[t].quiz_id == quizes[k].quiz_id) {
-                                            pushQuiz = false;
-                                            break;
-                                        }
-                                    }
-                                    if (pushQuiz) {
-                                        result[i].closed_quiz.push(quizes[k]);
-                                        pushQuiz = true;
-                                    }
+                    }*/
+                    dbquiz.getQuizes((quizes) => {
+                        for (let i = 0; i < result.length; i++) {
+                            for (let j = 0; j < result2.length; j++) {
+                                if (result2[j].user_id == result[i].pid) {
+                                    result[i].open_quiz.push(result2[j]);
                                 }
                             }
                         }
-                        if (result[i].open_quiz.length == 0) {
-                            result[i].closed_quiz = quizes;
+                        for (let i = 0; i < result.length; i++) {
+                            console.log("USER:", result[i].onyen);
+                            for (let j = 0; j < result3.length; j++) {
+                                for (let k = 0; k < result[i].open_quiz.length; k++) {
+                                    if (result[i].open_quiz[k].quiz_id == result3[j].quiz_id) {
+
+                                        console.log("USER2:", result[i].onyen);
+                                        continue;
+                                    }
+                                    if(k==(result[i].open_quiz.length-1)) {
+                                        result[i].closed_quiz.push(result3[j]);
+                                    }
+                                }
+                                if(result[i].open_quiz.length == 0) {
+                                    result[i].closed_quiz.push(result3[j]);
+                                }
+                            }
                         }
-                    }
-                    //console.log("Final:")
-                    //console.log(result);
-                    cb(result);
+                        /*for (let i = 0; i < result2.length; i++) {
+                            for (let j = 0; j < result.length; j++) {
+                                if (result2[i].user_id == result[j].pid) {
+                                    result[j].open_quiz.push(result2[i]);
+                                    break;
+                                }
+                            }
+                        }
+                        let pushQuiz = true;
+                        for (let i = 0; i < result.length; i++) {
+                            for (let j = 0; j < result[i].open_quiz.length; j++) {
+                                for (let k = 0; k < quizes.length; k++) {
+                                    if (result[i].open_quiz[j].quiz_id != quizes[k].quiz_id) {
+                                        for (let t = 0; t < result[i].closed_quiz.length; t++) {
+                                            if (result[i].closed_quiz[t].quiz_id == quizes[k].quiz_id) {
+                                                pushQuiz = false;
+                                                break;
+                                            }
+                                        }
+                                        if (pushQuiz) {
+                                            result[i].closed_quiz.push(quizes[k]);
+                                            pushQuiz = true;
+                                        }
+                                    }
+                                }
+                            }
+                            if (result[i].open_quiz.length == 0) {
+                                result[i].closed_quiz = quizes;
+                            }
+                        }*/
+                        console.log("Final:")
+                        console.log(result);
+                        cb(result);
+                    })
                 });
             })
         })
