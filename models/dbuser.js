@@ -150,11 +150,11 @@ module.exports = {
     // Function changes a users section in user_section table.
     updateSection: function (pid, section, cb) {
         con.query('UPDATE user_section SET section_id = ' + section + ' WHERE pid = ' + pid, function (err, result) {
-            if(err) throw err;
+            if (err) throw err;
             console.log(result.affectedRows, "ROWS");
-            if(result.affectedRows == 0) {
-                con.query('INSERT INTO user_section (pid, section_id) VALUES ('+pid+','+section+')',function(err, result) {
-                    if(err)throw err;
+            if (result.affectedRows == 0) {
+                con.query('INSERT INTO user_section (pid, section_id) VALUES (' + pid + ',' + section + ')', function (err, result) {
+                    if (err) throw err;
                     cb("OK2");
                 })
             } else {
@@ -173,24 +173,60 @@ module.exports = {
     // Function deletes users from the users table.
     deleteUsers: function (usersArray, cb) {
         console.log(usersArray);
-        con.query('DELETE FROM users WHERE (pid) IN (?)', [usersArray], function (err, result) {
-            if (err) throw err;
-            cb();
-        })
+        let ArrayTA = [];
+        let regular = [];
+        for (let i = 0; i < usersArray.length; i++) {
+            if (usersArray[i].isTA == 'true') {
+                ArrayTA.push(usersArray[i].id);
+            }
+            regular.push(usersArray[i].id);
+
+        }
+        console.log(ArrayTA);
+        console.log(regular);
+        if (ArrayTA.length != 0) {
+            con.query('SELECT section.id FROM section INNER JOIN ta_section ON section.id = ta_section.section_id INNER JOIN users ON ta_section.ta_id = users.pid WHERE (users.pid) IN (?)', [ArrayTA], function (err, result) {
+                if (err) throw err;
+                console.log("RESULT HERE", result);
+                let secId = [];
+                for (let i = 0; i < result.length; i++) {
+                    secId.push(result[i].id);
+                }
+                console.log(secId);
+                con.query("UPDATE user_section SET section_id = -1 WHERE id = " + id, function (err, result) {
+                    if (err) throw err;
+                    con.query('DELETE FROM section WHERE (id) IN (?)', [secId], function (err, result) {
+                        con.query('DELETE FROM users WHERE (pid) IN (?)', [regular], function (err, result) {
+                            if (err) throw err;
+                            cb();
+                        })
+
+                    })
+                });
+            })
+        } else {
+            con.query('DELETE FROM users WHERE (pid) IN (?)', [regular], function (err, result) {
+                if (err) throw err;
+                cb();
+            })
+        }
     },
     // Function deletes section and user and TA ties to said section.
-    deleteSection: function(id, cb) {
-        con.query("DELETE FROM section WHERE id = " + id, function(err, result) {
-            if(err) throw err;
-            cb();
+    deleteSection: function (id, cb) {
+        con.query("UPDATE user_section SET section_id = -1 WHERE section_id = " + id, function (err, result) {
+            if (err) throw err;
+            con.query("DELETE FROM section WHERE id = " + id, function (err, result) {
+                if (err) throw err;
+                cb();
+            })
         })
     },
     //Resets quiz submissions for specified user.
-    quizReset: function(id, usersArray, cb) {
-      con.query('DELETE FROM quiz_submission WHERE (pid) IN (?) AND quiz_id = ' + id, [usersArray], function(err, result) {
-         if(err) throw err;
-          cb();
-      });
+    quizReset: function (id, usersArray, cb) {
+        con.query('DELETE FROM quiz_submission WHERE (pid) IN (?) AND quiz_id = ' + id, [usersArray], function (err, result) {
+            if (err) throw err;
+            cb();
+        });
     },
     // Function takes current Admin's info and creates a section. This function is for CSV upload of a section.
     createSection: function (taPID, sectionName, cb) {
@@ -248,7 +284,7 @@ module.exports = {
         if (!req.session.dat) {
             req.session.dat = {};
             // current default user, on local.
-            //req.headers.pid = "720462663";
+            req.headers.pid = "720462663";
             //req.headers.pid = "237";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;

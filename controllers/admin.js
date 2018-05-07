@@ -3,7 +3,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
     app.get('/admin', (req, res) => {
         dbuser.login(req, (user) => {
             dbuser.verifyAdmin(req, res, (adm) => {
-                res.render('indexAdmin', req.session.dat);
+                res.redirect('/admin/viewQuiz');
             });
         })
     });
@@ -38,7 +38,7 @@ module.exports = function (app, dbquiz, dbuser, upload, csv, fs) {
                 if (!req.body.deleted) {
                     req.body.deleted = [];
                 }
-                dbquiz.saveQuiz(req.body.id, req.body.name, req.body.questions, req.body.deleted, (quizid) => {
+                dbquiz.saveQuiz(req.body.id, req.body.name, req.body.questions, req.body.deleted, req.body.deleteda, (quizid) => {
                     console.log("Quiz ID", quizid);
                     res.sendStatus(200);
                 });

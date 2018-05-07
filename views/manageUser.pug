@@ -74,7 +74,7 @@ block content
                                       td.align-middle=val.first_name + " " + val.last_name
                                       td.align-middle=val.onyen
                                       td(id="pid").align-middle=val.pid
-                                      td.align-middle=val.type
+                                      td(id="type").align-middle=val.type
                                       td(id="secName").align-middle=val.name
                                       td.align-middle
                                           if val.type == "Student"
@@ -146,7 +146,12 @@ block content
                         console.log("clicked");
                       $(".userSelection:checked").each(function(index, el) {
                         //console.log($(el).attr("id"));
-                        checkedUsers.push($(el).attr("id"));
+                        let TA = false;
+                        console.log($(el).parent().siblings("#type").html());
+                        if($(el).parent().siblings("#type").html() == "TA") {
+                            TA = true;
+                        }
+                        checkedUsers.push({ id: $(el).attr("id"), isTA: TA });
                         });
                         console.log(checkedUsers);
                         $.post("/admin/deleteUser", {

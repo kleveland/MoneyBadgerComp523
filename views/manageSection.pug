@@ -31,20 +31,24 @@ block content
                         div.card
                             div(class="secHeader" id=val.id).card_header
                                 h5.mb-0.sec-accordion
-                                    a(class="deleteSec" style="color: white;" id=val.id).btn.btn-primary Delete Section
-                                    button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name
-                                    div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
-                                        div.dropdown-menu
-                                            h6.dropdown-header Click to Close Quiz
-                                            each val, index in quizes
-                                                a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
-                                    div.dropdown.inline-dropdown
-                                        button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
-                                        div.dropdown-menu
-                                            h6.dropdown-header Click to Open Quiz
-                                            each val, index in quizes
-                                                a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
+                                    if val.id != -1
+                                        a(class="deleteSec" style="color: white;" id=val.id).btn.btn-primary Delete Section
+                                        button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.ta_name + " - " + val.section_name
+                                    else
+                                        button(data-toggle="collapse" data-target="#sec"+val.id aria-expanded="false" aria-controls="sec"+val.id).btn.btn-link=val.section_name
+                                    if val.id != -1
+                                        div.dropdown.inline-dropdown
+                                            button(type="button" data-toggle="dropdown").btn.btn-success.dropdown-toggle Open Quizzes
+                                            div.dropdown-menu
+                                                h6.dropdown-header Click to Close Quiz
+                                                each val, index in quizes
+                                                    a(href="#" class="closequiz" id=val.quiz_id).dropdown-item=val.quiz_name
+                                        div.dropdown.inline-dropdown
+                                            button(type="button" data-toggle="dropdown").btn.btn-danger.dropdown-toggle Closed Quizzes
+                                            div.dropdown-menu
+                                                h6.dropdown-header Click to Open Quiz
+                                                each val, index in quizes
+                                                    a(href="#" class="openquiz" id=val.quiz_id).dropdown-item=val.quiz_name
                             div(id="sec"+val.id aria-labelledby="sec"+val.id).collapse
                                 div.card-body
                                     if val.students.length == 1 && val.students[0].name == "null null"
@@ -112,6 +116,7 @@ block content
                         processData: false, // NEEDED, DON'T OMIT THIS
 
                         success: function(){
+                                alert("Section added.");
                               location.reload(true);
                             }
                         // ... Other options like success and etc
@@ -132,6 +137,7 @@ block content
                     }).get(),
                     quiz_id: $(this).attr("id")
                 }).done(function() {
+                    alert("Quiz opened.");
                     console.log("Success Open");
                 });
             })
@@ -164,6 +170,7 @@ block content
                     }).get(),
                     quiz_id: $(this).attr("id")
                 }).done(function() {
+                    alert("Quiz closed.");
                     console.log("Success Close");
                 });
             })

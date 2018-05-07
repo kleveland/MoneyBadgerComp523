@@ -120,104 +120,111 @@ module.exports = {
         });
     },
 
-    saveQuiz: function (id, name, questions, deleted, cb) {
+    saveQuiz: function (id, name, questions, deleted, deletedans, cb) {
         con.query('UPDATE quiz SET quiz_name = "' + name + '", creation_date=NOW() WHERE quiz_id = ' + id, function (err, result) {
             if (err) throw err;
             let del = [];
+            let dela = [];
             for (let i = 0; i < deleted.length; i++) {
                 del.push([deleted[i]]);
             }
+            for (let i = 0; i < deletedans.length; i++) {
+                dela.push([deletedans[i]]);
+            }
             console.log("questions", del);
-            con.query('DELETE FROM questions WHERE question_id = ?', [del], function (err, result) {
-                if (del.length != 0) {
-                    if (err) throw err;
-                }
-                /*console.log("Deleted questions.");
-                let updateq = [];
-                let updatea = [];
-                let newq = [];
-                let newa = [];
-                for (let i = 0; i < questions.length; i++) {
-                    if (questions[i].id) {
-                        updateq.push(questions[i]);
-                    } else {
-                        newq.push(questions[i]);
+            con.query('DELETE FROM answers WHERE answer_id = ?', [dela], function (err, result) {
+                if (err) throw err;
+                con.query('DELETE FROM questions WHERE question_id = ?', [del], function (err, result) {
+                    if (del.length != 0) {
+                        if (err) throw err;
                     }
-                }
-                console.log(updateq);
-                console.log(updatea);
-                console.log(newq);
-                console.log(newa);
-                let updateqstr = '';
-                let updateastr = '';
-                let newqstr = '';
-                let newastr = '';*/
-                for (let i = 0; i < questions.length; i++) {
-                    if (questions[i].id) {
-                        (function () {
-                            con.query('UPDATE questions SET question = "' + questions[i].question_html.replace(/"/g, '\\"') + '",quiz_id = ' + id + ' WHERE question_id = ' + questions[i].id, function (err, result) {
-                                if (err) throw err;
-                                console.log("RESULT", i, result);
-                                for (let j = 0; j < questions[i].answers.length; j++) {
-                                    if (questions[i].answers[j].id) {
+                    /*console.log("Deleted questions.");
+                    let updateq = [];
+                    let updatea = [];
+                    let newq = [];
+                    let newa = [];
+                    for (let i = 0; i < questions.length; i++) {
+                        if (questions[i].id) {
+                            updateq.push(questions[i]);
+                        } else {
+                            newq.push(questions[i]);
+                        }
+                    }
+                    console.log(updateq);
+                    console.log(updatea);
+                    console.log(newq);
+                    console.log(newa);
+                    let updateqstr = '';
+                    let updateastr = '';
+                    let newqstr = '';
+                    let newastr = '';*/
+                    for (let i = 0; i < questions.length; i++) {
+                        if (questions[i].id) {
+                            (function () {
+                                con.query('UPDATE questions SET question = "' + questions[i].question_html.replace(/"/g, '\\"') + '",quiz_id = ' + id + ' WHERE question_id = ' + questions[i].id, function (err, result) {
+                                    if (err) throw err;
+                                    console.log("RESULT", i, result);
+                                    for (let j = 0; j < questions[i].answers.length; j++) {
+                                        if (questions[i].answers[j].id) {
+                                            (function () {
+                                                let cor = 0;
+                                                console.log("TRUE VALUE", questions[i].answers[j].correct);
+                                                if (questions[i].answers[j].correct == 'true') {
+                                                    cor = 1;
+                                                } else {
+                                                    cor = 0;
+                                                }
+                                                con.query('UPDATE answers SET answer = "' + questions[i].answers[j].text + '", correct_answer = ' + cor + ' WHERE answer_id = ' + questions[i].answers[j].id, function (err, result) {
+                                                    if (err) throw err;
+                                                    //WIP
+                                                })
+                                            })();
+                                        } else {
+                                            (function () {
+                                                let cor = 0;
+                                                if (questions[i].answers[j].correct == 'true') {
+                                                    cor = 1;
+                                                } else {
+                                                    cor = 0;
+                                                }
+                                                con.query('INSERT INTO answers (answer,correct_answer,question_id) VALUES ("' + questions[i].answers[j].text + '", ' + cor + ',' + questions[i].id + ')', function (err, result) {
+                                                    if (err) throw err;
+                                                    //WIP
+                                                })
+                                            })();
+                                        }
+                                    }
+                                })
+                            })();
+                        } else {
+                            (function () {
+                                con.query('INSERT INTO questions (question,quiz_id) VALUES ("' + questions[i].question_html.replace(/"/g, '\\"') + '",' + id + ')', function (err, result) {
+                                    if (err) throw err;
+                                    console.log("RESULT2", i, result);
+                                    for (let j = 0; j < questions[i].answers.length; j++) {
                                         (function () {
                                             let cor = 0;
-                                            console.log("TRUE VALUE", questions[i].answers[j].correct);
                                             if (questions[i].answers[j].correct == 'true') {
                                                 cor = 1;
                                             } else {
                                                 cor = 0;
                                             }
-                                            con.query('UPDATE answers SET answer = "' + questions[i].answers[j].text + '", correct_answer = ' + cor + ' WHERE answer_id = ' + questions[i].answers[j].id, function (err, result) {
-                                                if (err) throw err;
-                                                //WIP
-                                            })
-                                        })();
-                                    } else {
-                                        (function () {
-                                            let cor = 0;
-                                            if (questions[i].answers[j].correct == 'true') {
-                                                cor = 1;
-                                            } else {
-                                                cor = 0;
-                                            }
-                                            con.query('INSERT INTO answers (answer,correct_answer,question_id) VALUES ("' + questions[i].answers[j].text + '", ' + cor + ',' + questions[i].id + ')', function (err, result) {
+                                            con.query('INSERT INTO answers (answer,correct_answer,question_id) VALUES ("' + questions[i].answers[j].text + '", ' + cor + ',' + result.insertId + ')', function (err, result) {
                                                 if (err) throw err;
                                                 //WIP
                                             })
                                         })();
                                     }
-                                }
-                            })
-                        })();
-                    } else {
-                        (function () {
-                            con.query('INSERT INTO questions (question,quiz_id) VALUES ("' + questions[i].question_html.replace(/"/g, '\\"') + '",' + id + ')', function (err, result) {
-                                if (err) throw err;
-                                console.log("RESULT2", i, result);
-                                for (let j = 0; j < questions[i].answers.length; j++) {
-                                    (function () {
-                                        let cor = 0;
-                                        if (questions[i].answers[j].correct == 'true') {
-                                            cor = 1;
-                                        } else {
-                                            cor = 0;
-                                        }
-                                        con.query('INSERT INTO answers (answer,correct_answer,question_id) VALUES ("' + questions[i].answers[j].text + '", ' + cor + ',' + result.insertId + ')', function (err, result) {
-                                            if (err) throw err;
-                                            //WIP
-                                        })
-                                    })();
-                                }
-                            })
-                        })();
+                                })
+                            })();
+                        }
                     }
-                }
-                con.query('DELETE FROM quiz_submission WHERE quiz_id = ' + id, function (err, result) {
-                    if (err) throw err;
-                    console.log("Deleted quiz submissions.");
-                    cb();
-                });
+                    con.query('DELETE FROM quiz_submission WHERE quiz_id = ' + id, function (err, result) {
+                        if (err) throw err;
+                        console.log("Deleted quiz submissions.");
+                        cb();
+                    });
+                })
             })
         })
     },

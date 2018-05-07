@@ -136,6 +136,7 @@ module.exports = function (app, dbquiz, dbuser) {
                     }
                 } else {
                     console.log("Temp. fail to post");
+                    res.redirect('/notopen');
                 }
             });
 

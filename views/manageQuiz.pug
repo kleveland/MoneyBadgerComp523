@@ -28,11 +28,14 @@ block content
       script.
             let questions = JSON.parse('!{editquiz.questions}');
             let deleted_q = [];
+            let deleted_a = [];
             console.log(questions);
             drawQuestions();
 
           $(document).on("click","#choice-delete", function() {
               console.log("deleted choice");
+              console.log($(this).parent().children(".choice-entry").attr("id"));
+              deleted_a.push($(this).parent().children(".choice-entry").attr("id"));
               $(this).parent().remove();
           })
 
@@ -179,6 +182,7 @@ block content
             dat.name = $("#quizName").val();
             console.log(deleted_q);
             dat.deleted = deleted_q;
+            dat.deleteda = deleted_a;
             dat.questions = questions;
             dat.id = "#{editquiz.quiz_id}";
             console.log(dat);
@@ -190,6 +194,7 @@ block content
                 deleted_q = [];
                 drawQuestions();
                 $("#quizName").val('');*/
+                alert("Saved changes to quiz.");
                 location.reload(true);
             })
             //alert("Quiz added.")
