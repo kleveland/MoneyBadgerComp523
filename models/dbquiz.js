@@ -52,8 +52,8 @@ module.exports = {
     getQuizAnswers: function (quizid, cb) {
         con.query("SELECT * FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE answers.correct_answer = 1 AND questions.quiz_id = " + quizid, function (err, result, fields) {
             if (err) throw err;
-            console.log("QUIZ ANSWERS");
-            console.log(result);
+            //console.log("QUIZ ANSWERS");
+            //console.log(result);
             cb(result);
         })
     },
@@ -62,8 +62,8 @@ module.exports = {
         con.query("SELECT * FROM quiz INNER JOIN questions ON quiz.quiz_id = questions.quiz_id INNER JOIN answers ON questions.question_id = answers.question_id WHERE questions.quiz_id = " + quizid, function (err, result, fields) {
             if (err) throw err;
             let questions = result;
-            console.log("QUESTIONS");
-            console.log(questions);
+            //console.log("QUESTIONS");
+            //console.log(questions);
             //console.log(questions)
             result = {
                 questlist: []
@@ -103,7 +103,7 @@ module.exports = {
                 });
                 i++;
                 while (questions[i] != undefined && questions[i].question_id == id) {
-                    console.log("TEST", questions[i].correct_answer, i);
+                    //console.log("TEST", questions[i].correct_answer, i);
                     if (questions[i].correct_answer >= 1) {
                         answers.questlist[idx].answer_id = questions[i].answer_id;
                     }
@@ -113,7 +113,7 @@ module.exports = {
                         ans_id: questions[i].answer_id
                     });
                     i++;
-                    console.log("TEST2", questions[i], id, i)
+                    //console.log("TEST2", questions[i], id, i)
                 }
             }
             cb(result, answers)
@@ -131,44 +131,25 @@ module.exports = {
             for (let i = 0; i < deletedans.length; i++) {
                 dela.push([deletedans[i]]);
             }
-            console.log("questions", del);
+            //console.log("questions", del);
             con.query('DELETE FROM answers WHERE answer_id = ?', [dela], function (err, result) {
                 if (err) throw err;
                 con.query('DELETE FROM questions WHERE question_id = ?', [del], function (err, result) {
                     if (del.length != 0) {
                         if (err) throw err;
                     }
-                    /*console.log("Deleted questions.");
-                    let updateq = [];
-                    let updatea = [];
-                    let newq = [];
-                    let newa = [];
-                    for (let i = 0; i < questions.length; i++) {
-                        if (questions[i].id) {
-                            updateq.push(questions[i]);
-                        } else {
-                            newq.push(questions[i]);
-                        }
-                    }
-                    console.log(updateq);
-                    console.log(updatea);
-                    console.log(newq);
-                    console.log(newa);
-                    let updateqstr = '';
-                    let updateastr = '';
-                    let newqstr = '';
-                    let newastr = '';*/
+
                     for (let i = 0; i < questions.length; i++) {
                         if (questions[i].id) {
                             (function () {
                                 con.query('UPDATE questions SET question = "' + questions[i].question_html.replace(/"/g, '\\"') + '",quiz_id = ' + id + ' WHERE question_id = ' + questions[i].id, function (err, result) {
                                     if (err) throw err;
-                                    console.log("RESULT", i, result);
+                                    //console.log("RESULT", i, result);
                                     for (let j = 0; j < questions[i].answers.length; j++) {
                                         if (questions[i].answers[j].id) {
                                             (function () {
                                                 let cor = 0;
-                                                console.log("TRUE VALUE", questions[i].answers[j].correct);
+                                                //console.log("TRUE VALUE", questions[i].answers[j].correct);
                                                 if (questions[i].answers[j].correct == 'true') {
                                                     cor = 1;
                                                 } else {
@@ -200,7 +181,7 @@ module.exports = {
                             (function () {
                                 con.query('INSERT INTO questions (question,quiz_id) VALUES ("' + questions[i].question_html.replace(/"/g, '\\"') + '",' + id + ')', function (err, result) {
                                     if (err) throw err;
-                                    console.log("RESULT2", i, result);
+                                    //console.log("RESULT2", i, result);
                                     for (let j = 0; j < questions[i].answers.length; j++) {
                                         (function () {
                                             let cor = 0;
@@ -221,7 +202,7 @@ module.exports = {
                     }
                     con.query('DELETE FROM quiz_submission WHERE quiz_id = ' + id, function (err, result) {
                         if (err) throw err;
-                        console.log("Deleted quiz submissions.");
+                        //console.log("Deleted quiz submissions.");
                         cb();
                     });
                 })
@@ -234,16 +215,16 @@ module.exports = {
             [name]
         ]
         con.query("INSERT INTO quiz (quiz_name) VALUES ?", [quizdat], function (err, result, fields) {
-            console.log("111");
+            //console.log("111");
             if (err) throw err;
             let quizId = result.insertId;
             let questlist = [];
             for (let i = 0; i < questions.length; i++) {
                 questlist.push([questions[i].question_html, result.insertId]);
             }
-            console.log(questlist);
+            //console.log(questlist);
             con.query("INSERT INTO questions (question, quiz_id) VALUES ?", [questlist], function (err, result, fields) {
-                console.log("222");
+                //console.log("222");
                 if (err) throw err;
                 let anslist = [];
                 for (let i = 0; i < questions.length; i++) {
@@ -252,11 +233,11 @@ module.exports = {
                         anslist.push([questions[i].answers[j].text, correctinp, (result.insertId + i)]);
                     }
                 }
-                console.log(anslist);
+                //console.log(anslist);
                 con.query("INSERT INTO answers (answer, correct_answer, question_id) VALUES ?", [anslist], function (err, result, fields) {
-                    console.log("333");
+                    //console.log("333");
                     if (err) throw err;
-                    console.log("Quiz " + name + " successfully submitted.");
+                    //console.log("Quiz " + name + " successfully submitted.");
                     cb(quizId);
                 })
             })
@@ -272,11 +253,11 @@ module.exports = {
         } else {
             vals.push([pid, quiz]);
         }
-        console.log(vals);
+        //console.log(vals);
 
         con.query("INSERT IGNORE INTO open_quiz (user_id, quiz_id) VALUES ?", [vals], function (err, result, fields) {
             if (err) throw err;
-            console.log("Opened Quiz!");
+            //console.log("Opened Quiz!");
             cb();
         })
     },
@@ -290,16 +271,16 @@ module.exports = {
         } else {
             vals.push([pid, quiz]);
         }
-        console.log(vals);
+        //console.log(vals);
         con.query("DELETE FROM open_quiz WHERE (user_id,quiz_id) IN (?)", [vals], function (err, result, fields) {
             if (err) throw err;
-            console.log("Closed Quiz!");
+            //console.log("Closed Quiz!");
             cb();
         })
     },
 
     deleteQuizes: function (quizes, cb) {
-        console.log("QUIZES", quizes);
+        //console.log("QUIZES", quizes);
         con.query("DELETE FROM quiz WHERE (quiz_id) IN (?)", [quizes], function (err, result) {
             if (err) throw err;
             cb();
@@ -307,17 +288,15 @@ module.exports = {
     },
 
     exportQuizes: function (quizes, cb) {
-        console.log("QUIZES", quizes);
+        //console.log("QUIZES", quizes);
         con.query("SELECT * FROM users INNER JOIN quiz_submission ON users.pid = quiz_submission.pid INNER JOIN quiz ON quiz_submission.quiz_id = quiz.quiz_id WHERE quiz.quiz_id IN (?)", [quizes], function (err, result) {
             if (err) throw err;
-            console.log(result);
+            //console.log(result);
             let grades = [];
             let students = [];
             for (let i = 0; i < result.length; i++) {
                 for (let j = 0; j < grades.length; j++) {
-                    //console.log("i:",i,"j",j,"pid",result[i].pid);
                     if (grades[j].quiz_id == result[i].quiz_id) {
-                        //console.log("PUSH1", result[i].quiz_id);
                         grades[j].grades.push({
                             score: result[i].score,
                             pid: result[i].pid
@@ -334,7 +313,6 @@ module.exports = {
                             total: result[i].total,
                             grades: []
                         });
-                        //console.log("PUSH2", result[i].quiz_id);
                         grades[grades.length - 1].grades.push({
                             score: result[i].score,
                             pid: result[i].pid
@@ -377,29 +355,13 @@ module.exports = {
 
                 }
             }
-            console.log("GRADES");
-            console.log(grades);
-            console.log("STUDENTS");
-            console.log(students);
-            /*
-            {
-              onyen: "",
-              name: "",
-              pid: xx
-            }
-            {
-              quiz_id: xx,
-              name: "",
-              total: xx,
-              grades, [xx, xx, xx, ..]
-            }
-            */
+
             cb(grades, students);
         })
     },
 
     quizSubmission: function (pid, quizid, questions, cb) {
-        console.log("QUESTION FOMRAT", questions);
+        //console.log("QUESTION FOMRAT", questions);
         con.query("INSERT INTO quiz_submission (pid, quiz_id, timestamp, total) VALUES (" + pid + "," + quizid + ",NOW(), (SELECT SUM(tot) - COUNT(*) FROM (SELECT COUNT(*) AS tot FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE questions.quiz_id = " + quizid + " GROUP BY questions.question_id) AS t1)) ON DUPLICATE KEY UPDATE timestamp=NOW()", function (err, result, fields) {
             if (err) throw err;
             let subId = result.insertId;
@@ -409,8 +371,8 @@ module.exports = {
                     if (err) throw err;
                     con.query("UPDATE quiz_submission SET score = (SELECT SUM(val1-val2) AS score FROM (SELECT questions.question_id AS question_id,COUNT(*) AS val1 FROM questions INNER JOIN answers ON questions.question_id = answers.question_id WHERE quiz_id = " + quizid + " GROUP BY questions.question_id) AS t1 INNER JOIN (SELECT quiz_submission_answers.question_id AS question_id,COUNT(*) AS val2 FROM quiz_submission_answers WHERE submission_id = " + subId + " GROUP BY quiz_submission_answers.question_id) AS t2 ON t1.question_id = t2.question_id) WHERE pid = " + pid + " AND quiz_id = " + quizid, function (err, result, fields) {
                         if (err) throw err;
-                        console.log("SCORE", result);
-                        console.log("Submission of question success.");
+                        //console.log("SCORE", result);
+                        //console.log("Submission of question success.");
                         cb(result.insertId);
                     })
                 });
@@ -420,8 +382,8 @@ module.exports = {
     quizGetSubmission: function (pid, quizid, cb) {
         con.query("SELECT * FROM quiz_submission_answers WHERE submission_id = (SELECT DISTINCT id FROM quiz_submission WHERE quiz_id = " + quizid + " AND pid = " + pid + ")", function (err, result, fields) {
             if (err) throw err;
-            console.log("Recieved get submission.");
-            console.log(result);
+            //console.log("Recieved get submission.");
+            //console.log(result);
             cb(result);
         })
     }
