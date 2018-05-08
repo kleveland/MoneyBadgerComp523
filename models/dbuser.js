@@ -317,7 +317,8 @@ module.exports = {
         if (!req.session.dat) {
             req.session.dat = {};
             // current default user, on local.
-            //req.headers.pid = "720462663";
+            req.headers.pid = "720462663";
+            //req.headers.pid = "238";
             //req.headers.pid = "1231231232";
             this.findUser(req.headers.pid, (user) => {
                 req.session.dat.user = user;
