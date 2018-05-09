@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2018 at 01:03 AM
+-- Generation Time: May 08, 2018 at 10:13 PM
 -- Server version: 10.1.31-MariaDB
 -- PHP Version: 7.2.3
 
@@ -61,9 +61,17 @@ INSERT INTO `answers` (`answer_id`, `answer`, `correct_answer`, `question_id`) V
 (80, '12', 0, 38),
 (81, '2', 1, 38),
 (82, '51', 0, 38),
-(83, '1', 0, 39),
-(84, '2', 1, 39),
-(85, '3', 0, 39);
+(88, '1', 0, 41),
+(90, '3', 1, 41),
+(91, '12', 0, 41),
+(92, '124', 0, 41),
+(93, '51', 0, 41),
+(94, '1', 0, 42),
+(95, '2', 0, 42),
+(96, '123', 1, 42),
+(97, '1245', 1, 43),
+(98, '2', 0, 43),
+(99, '5', 0, 43);
 
 -- --------------------------------------------------------
 
@@ -103,13 +111,18 @@ CREATE TABLE `open_quiz` (
 
 INSERT INTO `open_quiz` (`quiz_id`, `user_id`) VALUES
 (1, 234),
+(1, 235),
 (1, 236),
 (1, 237),
 (1, 238),
 (1, 241),
-(1, 1234),
-(1, 720462663),
-(1, 720470689);
+(1, 32423432),
+(35, 235),
+(35, 236),
+(35, 238),
+(35, 241),
+(35, 32423432),
+(36, 237);
 
 -- --------------------------------------------------------
 
@@ -136,7 +149,9 @@ INSERT INTO `questions` (`question_id`, `question`, `quiz_id`) VALUES
 (36, 'testq3', 1),
 (37, '<p style=\"text-align: center;\"><span style=\"font-size: 0.9375rem;\">Question 1: 2=2?</span></p>', 35),
 (38, '<p><strong>Question 2:</strong></p><p><strong><br></strong></p><p><strong>1+1</strong></p>', 35),
-(39, 'testq', 35);
+(41, 'New QUestion', 35),
+(42, '123', 36),
+(43, '1245', 36);
 
 -- --------------------------------------------------------
 
@@ -156,7 +171,8 @@ CREATE TABLE `quiz` (
 
 INSERT INTO `quiz` (`quiz_id`, `creation_date`, `quiz_name`) VALUES
 (1, '2018-05-06 11:03:56', 'Test Quiz 12334'),
-(35, '2018-05-06 17:14:25', 'Test Quiz 2');
+(35, '2018-05-06 20:58:45', 'Test Quiz 2'),
+(36, '2018-05-07 08:28:02', 'New Quiz Again');
 
 -- --------------------------------------------------------
 
@@ -168,10 +184,23 @@ CREATE TABLE `quiz_submission` (
   `id` int(11) NOT NULL,
   `pid` int(11) NOT NULL,
   `quiz_id` int(11) NOT NULL,
-  `score` int(11) NOT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
   `total` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quiz_submission`
+--
+
+INSERT INTO `quiz_submission` (`id`, `pid`, `quiz_id`, `score`, `total`, `timestamp`) VALUES
+(1, 720462663, 1, 8, 10, '2018-05-07 12:26:52'),
+(8, 720462663, 36, 2, 4, '2018-05-07 12:29:35'),
+(12, 236, 1, 9, 10, '2018-05-07 13:21:35'),
+(13, 234, 1, 3, 10, '2018-05-08 19:00:30'),
+(26, 236, 35, 5, 8, '2018-05-08 19:01:21'),
+(32, 238, 1, 5, 10, '2018-05-08 19:02:12'),
+(42, 238, 35, 6, 8, '2018-05-08 19:02:25');
 
 -- --------------------------------------------------------
 
@@ -185,6 +214,62 @@ CREATE TABLE `quiz_submission_answers` (
   `answer_id` int(11) NOT NULL,
   `correct` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `quiz_submission_answers`
+--
+
+INSERT INTO `quiz_submission_answers` (`submission_id`, `question_id`, `answer_id`, `correct`) VALUES
+(1, 1, 12, 1),
+(1, 2, 13, 0),
+(1, 2, 14, 0),
+(1, 3, 59, 1),
+(1, 35, 71, 1),
+(1, 35, 72, 0),
+(1, 36, 76, 1),
+(8, 42, 96, 1),
+(8, 43, 97, 1),
+(8, 43, 98, 0),
+(8, 43, 99, 0),
+(12, 1, 12, 1),
+(12, 2, 16, 1),
+(12, 3, 59, 1),
+(12, 35, 71, 1),
+(12, 36, 75, 0),
+(12, 36, 76, 1),
+(13, 1, 9, 0),
+(13, 1, 12, 1),
+(13, 2, 13, 0),
+(13, 2, 14, 0),
+(13, 2, 15, 0),
+(13, 2, 16, 1),
+(13, 3, 59, 1),
+(13, 35, 71, 1),
+(13, 35, 72, 0),
+(13, 36, 74, 0),
+(13, 36, 75, 0),
+(13, 36, 76, 1),
+(26, 37, 79, 1),
+(26, 38, 81, 1),
+(26, 41, 90, 1),
+(26, 41, 91, 0),
+(26, 41, 92, 0),
+(26, 41, 93, 0),
+(32, 1, 11, 0),
+(32, 1, 12, 1),
+(32, 2, 14, 0),
+(32, 2, 16, 1),
+(32, 3, 59, 1),
+(32, 35, 71, 1),
+(32, 35, 72, 0),
+(32, 36, 73, 0),
+(32, 36, 75, 0),
+(32, 36, 76, 1),
+(42, 37, 78, 0),
+(42, 37, 79, 1),
+(42, 38, 81, 1),
+(42, 41, 90, 1),
+(42, 41, 93, 0);
 
 -- --------------------------------------------------------
 
@@ -202,9 +287,9 @@ CREATE TABLE `section` (
 --
 
 INSERT INTO `section` (`id`, `name`) VALUES
+(-1, 'Unassigned'),
 (1, '101'),
-(2, '102'),
-(35, 'import_test');
+(2, '102');
 
 -- --------------------------------------------------------
 
@@ -223,8 +308,7 @@ CREATE TABLE `ta_section` (
 
 INSERT INTO `ta_section` (`ta_id`, `section_id`) VALUES
 (123, 1),
-(124, 2),
-(123453212, 35);
+(124, 2);
 
 -- --------------------------------------------------------
 
@@ -253,9 +337,10 @@ INSERT INTO `users` (`pid`, `onyen`, `first_name`, `last_name`, `group_id`) VALU
 (237, 'testuser4', 'test', 'user4', 3),
 (238, 'testuser5', 'test', 'user5', 3),
 (241, 'testuser8', 'test', 'user8', 3),
-(1234, '123', '123', '123', 3),
+(21000, 'tes1', 'tes1', 'test2', 3),
+(1231231, '12312', 'asdsa', 'sdafsd', 3),
+(21312512, 'testta', 'ta', 'ta', 2),
 (32423432, '123', '123user', '123user2', 3),
-(123453212, 'testatata', 'tatesttest', 'testtata', 2),
 (720462663, 'stevenan', 'Steven', 'Nguyen', 1),
 (720466550, 'manjil', 'Manjil', 'Thapa', 1),
 (720469515, 'lukeatha', 'Luke', 'Athans', 1),
@@ -284,8 +369,9 @@ INSERT INTO `user_section` (`pid`, `section_id`) VALUES
 (237, 1),
 (238, 1),
 (241, 1),
-(1234, 1),
-(32423432, 2);
+(32423432, 1),
+(1231231, -1),
+(21000, -1);
 
 --
 -- Indexes for dumped tables
@@ -374,31 +460,31 @@ ALTER TABLE `user_section`
 -- AUTO_INCREMENT for table `answers`
 --
 ALTER TABLE `answers`
-  MODIFY `answer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `answer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `quiz`
 --
 ALTER TABLE `quiz`
-  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `quiz_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `quiz_submission`
 --
 ALTER TABLE `quiz_submission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `section`
 --
 ALTER TABLE `section`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
