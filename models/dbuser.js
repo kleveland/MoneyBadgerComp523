@@ -120,7 +120,11 @@ module.exports = {
                         section_name: result[i].name,
                         ta_pid: result[i].ta_pid,
                         ta_name: result[i].ta_first + " " + result[i].ta_last,
-                        students: []
+                        students: [{
+                        name: result[i].first_name + " " + result[i].last_name,
+                        onyen: result[i].onyen,
+                        pid: result[i].pid
+                    }]
                     });
                     continue;
                 }
@@ -156,7 +160,8 @@ module.exports = {
                 }
                 appendnew = false;
             }
-            //console.log(secorg);
+            console.log("SECORG");
+            console.log(secorg);
             cb(secorg);
         })
     },
@@ -220,15 +225,19 @@ module.exports = {
         if (ArrayTA.length != 0) {
             con.query('SELECT section.id FROM section INNER JOIN ta_section ON section.id = ta_section.section_id INNER JOIN users ON ta_section.ta_id = users.pid WHERE (users.pid) IN (?)', [ArrayTA], function (err, result) {
                 if (err) throw err;
-                //console.log("RESULT HERE", result);
+                console.log("RESULT HERE", result);
                 let secId = [];
                 for (let i = 0; i < result.length; i++) {
                     secId.push(result[i].id);
                 }
-                //console.log(secId);
-                con.query("UPDATE user_section SET section_id = -1 WHERE id = " + id, function (err, result) {
+                console.log(secId);
+                if(secId.length == 0) {
+                    secId.push('');
+                }
+                con.query("UPDATE user_section SET section_id = -1 WHERE (section_id) IN (?)", [secId], function (err, result) {
                     if (err) throw err;
                     con.query('DELETE FROM section WHERE (id) IN (?)', [secId], function (err, result) {
+                        if(err) throw err;
                         con.query('DELETE FROM users WHERE (pid) IN (?)', [regular], function (err, result) {
                             if (err) throw err;
                             cb();
@@ -317,7 +326,7 @@ module.exports = {
         if (!req.session.dat) {
             req.session.dat = {};
             // current default user, on local.
-            req.headers.pid = "720462663";
+            //req.headers.pid = "720462663";
             //req.headers.pid = "1231231232";
 
             this.findUser(req.headers.pid, (user) => {
